@@ -1,0 +1,27 @@
+extends ../partials/_layout.pug 
+
+block content 
+    .container.py-3
+        .row.pb-3.justify-content-md-between
+            <div class="col-md-4">
+                <label for="categories" class="form-label">🔍 Categorías de Recetas</label>
+                <select class="form-select" id="categories" name="categories">
+                    <option selected value="">Explorar todas las categorías</option>
+                </select>
+            </div>
+            <div class="col-md-4 text-end align-self-end" id="botonFavoritos">
+                <button type="submit" class="btn btn-outline-primary px-4" id="fijarCategoria">⭐ Marcar Favorita</button>
+            </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 pb-3" id="aleatorioshome">
+
+        </div>
+        <div class="pb-3" id="contenedorFavoritos">
+            h2 ⭐ Mis Recetas Favoritas
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="platosFavoritos">
+                p Aún no has guardado ninguna receta como favorita. ¡Empieza a explorar!
+            </div>
+        </div>
+
+block scripts 
+    <script type="module" src="./dist/home.js"></script>

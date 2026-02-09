@@ -1,0 +1,64 @@
+extends ../partials/_layout.pug 
+
+block content 
+    .container.py-3
+        .row.pb-3.justify-content-md-between
+            <div class="col-md-8">
+                <div id="descripcionPlato" class="mb-3">
+                    <h1 id="nombrePlato"></h1>
+                    <div id="descripcion"></div>
+
+                    h2 📝 Lista de Ingredientes
+                    <ul class="list-group" id="ingredientes"></ul>
+                </div>
+                <div class="d-none" id="detallesForm">
+                    <form class="row g-3 needs-validation" id="guardarOpinion" novalidate>
+                        h3 💬 Comparte tu experiencia
+                        <div class="col-md-5">
+                            h4 🌟 Tu valoración
+                            <div class="text-warning fs-3"><!--TODO: obligatorio si se marca como que la he hecho-->
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i> 
+                            </div>
+                            input(type="hidden", name="rating", id="rating", value="0")
+                            <div class="invalid-feedback">
+                                |Ha marcado como Hecha, por favor deje una calificación.
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-5">
+                            h4 📋 Estado de la receta
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="quieroHacerla" name="estado" value="QUIERO_HACERLA" checked>
+                                label(for="QUIERO_HACERLA").form-check-label 🎯 Quiero prepararla
+                            </div> 
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="hecho" name="estado" value="LA_HE_HECHO">
+                                label(for="LA_HE_HECHO").form-check-label ✅ Ya la preparé
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            label(for="opinion").form-label.fs-4 💭 Tu opinión
+                            textarea#opinion(name="opinion" rows="4" placeHolder="Cuéntanos qué te pareció esta receta...").form-control
+                        </div> 
+                        <div class="col-md-6">
+                            button(type="submit").btn.btn-primary 💾 Guardar mi opinión
+                        </div>
+                        <div class="col-md-6">
+                            button#resetearForm(type="button").btn.btn-secondary ❌ Cancelar
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                img#imagenPlato(src="#" alt="Cargando Imagen...").img-square
+                <button type="submit" class="btn btn-outline-warning px-5 my-3" id="platoFavorito">⭐ Añadir a Favoritas</button>
+            </div>
+
+
+
+block scripts 
+    <script type="module" src="./dist/details.js"></script>

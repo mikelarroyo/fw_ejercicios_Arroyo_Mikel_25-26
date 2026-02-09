@@ -1,0 +1,20 @@
+{
+  "name": "recetashub-mikel-arroyo",
+  "version": "1.0.0",
+  "description": "Aplicación web para descubrir, guardar y compartir recetas de cocina - Desarrollado por Mikel Arroyo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:pug": "pug src/views/pages --out public",
+    "watch:pug": "pug src/views/pages --out public --watch --pretty"
+  },
+  "keywords": [],
+  "author": "Mikel Arroyo",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "pug": "^3.0.3",
+    "pug-cli": "^1.0.0-alpha6",
+    "typescript": "^5.9.3"
+  }
+}

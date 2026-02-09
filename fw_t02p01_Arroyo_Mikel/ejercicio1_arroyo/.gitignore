@@ -1,0 +1,71 @@
+# --- NODE.JS & TYPESCRIPT ---
+node_modules/
+jspm_packages/
+out/
+build/
+*.tsbuildinfo
+.npm/
+.eslintcache
+.prettiercache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Archivos generados por TypeScript
+# NOTA: Mantenemos los .js y .js.map en el repositorio para facilitar la corrección
+# **/*.js
+# **/*.js.map
+**/*.d.ts
+# public/dist
+# dist/
+
+# --- SISTEMA OPERATIVO (OS) ---
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# --- VARIABLES DE ENTORNO ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.bak
+
+# --- IDEs Y EDITORES ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
