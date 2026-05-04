@@ -1,4 +1,3 @@
-let numero: number = 5;
+var numero = 5;
 console.log("Hola Typescript sin a configuracion");
 console.log(numero);
-
