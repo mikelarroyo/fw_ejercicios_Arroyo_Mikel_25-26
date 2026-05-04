@@ -24,6 +24,7 @@ export class ApiService {
             strCategory: plato.strCategory,
             strArea: plato.strArea,
             strMealThumb: plato.strMealThumb,
+            strInstructions: plato.strInstructions ?? "",
             ingredients: ingredientes,
         };
     }
@@ -64,5 +65,26 @@ export class ApiService {
         const data = await response.json();
 
         return this.convertirApiToInterface(data.meals[0]);
+    }
+
+    public async pedirPlatosPorNombre(nombre: string): Promise<MyMeal[]> {
+        const response: Response = await fetch(
+            this.API_URL + `/search.php?s=${encodeURIComponent(nombre)}`,
+        );
+        const data = await response.json();
+        if (!data.meals) return [];
+        return (data.meals as unknown[]).map((plato) =>
+            this.convertirApiToInterface(plato),
+        );
+    }
+
+    public async pedirTodasAreas(): Promise<string[]> {
+        const response: Response = await fetch(
+            this.API_URL + `/list.php?a=list`,
+        );
+        const data = await response.json();
+        return (data.meals as { strArea: string }[])
+            .map((a) => a.strArea)
+            .sort((a, b) => a.localeCompare(b));
     }
 }

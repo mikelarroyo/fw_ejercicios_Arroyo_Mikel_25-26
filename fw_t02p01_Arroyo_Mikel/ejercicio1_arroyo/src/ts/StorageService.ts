@@ -2,6 +2,7 @@ import { AuthSession } from "./AuthSession.js";
 import { MyMeal } from "./MyMeal.js";
 import { User } from "./User.js";
 import { UserMeal } from "./UserMeal.js";
+import { UserOwnRecipe } from "./UserOwnRecipe.js";
 
 export class StorageService {
     private USER_KEY_ITEM: string = "users";
@@ -9,6 +10,7 @@ export class StorageService {
     private USER_MEAL_KEY_ITEM: string = "userMeals_";
     private USER_WEEKLY_KEY_ITEM: string = "weeklyPlans_";
     private USER_CACHE_KEY_ITEM: string = "userMiniMeal_";
+    private USER_OWN_RECIPES_KEY: string = "userOwnRecipes_";
 
     public guardarAgregarUsuario(nuevoUsuario: User) {
         const users: User[] = JSON.parse(
@@ -158,13 +160,49 @@ export class StorageService {
             (plato) => plato.mealId === platoActualizar.mealId,
         );
 
-        favoritosUserProcesados[indexPlato].status = platoActualizar.status
-        favoritosUserProcesados[indexPlato].notes = platoActualizar.notes
-        favoritosUserProcesados[indexPlato].rating = platoActualizar.rating
+        favoritosUserProcesados[indexPlato].status = platoActualizar.status;
+        favoritosUserProcesados[indexPlato].notes = platoActualizar.notes;
+        favoritosUserProcesados[indexPlato].rating = platoActualizar.rating;
 
         localStorage.setItem(
             this.USER_MEAL_KEY_ITEM + id,
             JSON.stringify(favoritosUserProcesados),
+        );
+    }
+
+    // ── Recetas propias del usuario ──────────────────────────────────────────
+
+    public getUserOwnRecipes(userId: User["id"]): UserOwnRecipe[] {
+        const raw =
+            localStorage.getItem(this.USER_OWN_RECIPES_KEY + userId) ?? "[]";
+        return JSON.parse(raw) as UserOwnRecipe[];
+    }
+
+    public saveUserOwnRecipe(recipe: UserOwnRecipe): void {
+        const recipes = this.getUserOwnRecipes(recipe.userId);
+        recipes.push(recipe);
+        localStorage.setItem(
+            this.USER_OWN_RECIPES_KEY + recipe.userId,
+            JSON.stringify(recipes),
+        );
+    }
+
+    public deleteUserOwnRecipe(recipeId: string, userId: User["id"]): void {
+        const recipes = this.getUserOwnRecipes(userId);
+        const updated = recipes.filter((r) => r.id !== recipeId);
+        localStorage.setItem(
+            this.USER_OWN_RECIPES_KEY + userId,
+            JSON.stringify(updated),
+        );
+    }
+
+    public existsUserOwnRecipeByName(
+        name: string,
+        userId: User["id"],
+    ): boolean {
+        const recipes = this.getUserOwnRecipes(userId);
+        return recipes.some(
+            (r) => r.name.toLowerCase() === name.toLowerCase(),
         );
     }
 }

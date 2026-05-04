@@ -1,5 +1,5 @@
 import { Category } from "./Category.js";
-import { MyMeal } from "./MyMeal";
+import { MyMeal } from "./MyMeal.js";
 import { StorageService } from "./StorageService.js";
 
 declare const bootstrap: any;

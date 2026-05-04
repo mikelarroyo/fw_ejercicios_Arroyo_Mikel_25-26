@@ -11,29 +11,35 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function comprobarSesionUsuario(): void {
-    let sesion: string | null = localStorage.getItem("session");
-    console.log(sesion);
     const storage = new StorageService();
     const view = new ViewService();
+    const usuario = storage.getUsuarioActual();
 
-    if (storage.getUsuarioActual()) {
-        view.mostrarElement(
-            document.querySelector("#menu-auth") as HTMLDivElement,
-            true,
-        );
-        view.mostrarElement(
-            document.querySelector("#menu-guest") as HTMLDivElement,
-            false,
-        );
-    } else {
-        view.mostrarElement(
-            document.querySelector("#menu-auth") as HTMLDivElement,
-            false,
-        );
-        view.mostrarElement(
-            document.querySelector("#menu-guest") as HTMLDivElement,
-            true,
-        );
+    const estaLogueado = usuario !== null;
+
+    view.mostrarElement(
+        document.querySelector("#menu-auth") as HTMLDivElement,
+        estaLogueado,
+    );
+    view.mostrarElement(
+        document.querySelector("#menu-guest") as HTMLDivElement,
+        !estaLogueado,
+    );
+
+    // Mostrar nombre del usuario
+    if (estaLogueado && usuario) {
+        const usernameSpan = document.querySelector("#username");
+        if (usernameSpan) usernameSpan.textContent = usuario.name;
+    }
+
+    // Mostrar/ocultar enlaces de navegación privados
+    const navMisRecetas = document.querySelector("#nav-mis-recetas");
+    const navPlanSemanal = document.querySelector("#nav-plan-semanal");
+    if (navMisRecetas) {
+        view.mostrarElement(navMisRecetas as HTMLElement, estaLogueado);
+    }
+    if (navPlanSemanal) {
+        view.mostrarElement(navPlanSemanal as HTMLElement, estaLogueado);
     }
 }
 
