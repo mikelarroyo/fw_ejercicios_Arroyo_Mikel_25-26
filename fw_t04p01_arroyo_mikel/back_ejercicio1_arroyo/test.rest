@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "username": "mikel",
-  "email": "mikel@fwseries.com",
+  "email": "mikel1@fwseries.com",
   "password": "1234"
 }
 
@@ -15,23 +15,13 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "mikel@fwseries.com",
+  "email": "mikel1@fwseries.com",
   "password": "1234"
 }
 
 ###
 
-### CHARACTERS (requieren token - sustituye TOKEN por el del login)
-
 GET http://localhost:3000/api/characters
-Authorization: Bearer TOKEN
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDM4MzJkODRkOTgxOWExYzI0YzA4IiwiaWF0IjoxNzc5NDQ3OTM3LCJleHAiOjE3ODAwNTI3Mzd9.EHiMnlJiOTAg7k1VU63Rj0PAzIKsZ7-0RimEywA5Pn0
 
 ###
-
-GET http://localhost:3000/api/characters?page=1&limit=4
-Authorization: Bearer TOKEN
-
-###
-
-GET http://localhost:3000/api/characters/6a0eb86ac06f22e7b4a00a4c
-Authorization: Bearer TOKEN
