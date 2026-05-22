@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/mikel/Desktop/DAW PORTATIL/Frameworks/fw_ejercicios_Arroyo_Mikel_25-26/api_node_01/**)"
+    ]
+  }
+}

@@ -1,0 +1,205 @@
+GET http://localhost:3000/api/places
+
+###
+
+POST http://localhost:3000/api/places
+Content-Type: application/json
+
+{
+  "name": "Ciudad Real"
+}
+
+###
+
+PUT http://localhost:3000/api/places/1
+Content-Type: application/json
+
+{
+  "name": "Valdepeñas"
+}
+
+###
+
+DELETE http://localhost:3000/api/places/1
+
+###
+GET http://localhost:3000/api/products
+
+###
+
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+  "name": "Sensor de temperatura WiFi",
+  "description": "Sensor IoT compatible con MQTT para monitorización remota",
+  "price": 39.95,
+  "stock": 120,
+  "department": "iot",
+  "available": true
+}
+
+###
+GET http://localhost:3000/api/products/6a0e0c16a960a44eea1f0e66
+###
+GET http://localhost:3000/api/products/search?department=iot&available=true
+
+###
+GET http://localhost:3000/api/products/search?department=teleco&available=true
+
+
+###
+PUT http://localhost:3000/api/products/6a0aeb7cb32ebcc5888f18b5
+Content-Type: application/json
+
+{
+  "price": 79.99,
+  "stock": 10
+}
+###
+DELETE http://localhost:3000/api/products/6a0aeb7cb32ebcc5888f18b5
+###
+
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "alumno6",
+  "email": "alumno3@fwshop.com",
+  "password": "1234"
+}
+
+
+###
+
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "alumno4",
+  "email": "alumno4@fwshop.com",
+  "password": "1234"
+}
+
+
+###
+
+
+POST http://localhost:3000/api/users/6a0e11111586e6e2dabf897b/cart
+Content-Type: application/json
+
+{
+  "productId": "6a0e0c16a960a44eea1f0e66"
+}
+
+
+###
+
+GET http://localhost:3000/api/users
+
+###
+
+GET http://localhost:3000/api/users/by-email/alumno1@fwshop.com
+
+###
+
+DELETE http://localhost:3000/api/users/6a0e11111586e6e2dabf897b/cart
+Content-Type: application/json
+
+{
+  "productId": "6a0e0c16a960a44eea1f0e66"
+}
+
+###
+
+DELETE http://localhost:3000/api/users/6a0e11111586e6e2dabf897b/cart/all
+
+###
+
+GET http://localhost:3000/api/products
+
+###
+
+GET http://localhost:3000/api/products?page=2&limit=4
+
+###
+
+GET http://localhost:3000/api/products?page=3&limit=4
+
+###
+GET http://localhost:3000/api/products/search?department=iot&page=1&limit=5
+
+###
+
+GET http://localhost:3000/api/products/search?minPrice=20&maxPrice=50
+
+###
+
+GET http://localhost:3000/api/products/search?available=true&sortBy=price&order=desc
+
+###
+
+GET http://localhost:3000/api/products/search?department=informatica&minPrice=10&sortBy=price&order=asc&page=1&limit=3
+
+###
+
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alumno2",
+  "email": "alumno6@fwshop.com",
+  "password": "1234"
+}
+
+###
+ 
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alumno6@fwshop.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alumno2@fwshop.com",
+  "password": "1234"
+}
+
+###
+GET http://localhost:3000/api/auth/me
+
+###
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmEwZWFiZjVkZjgyNjMyOGM1MTE4MzIyIiwiaWF0IjoxNzc5MzQ2NDQwLCJleHAiOjE3Nzk5NTEyNDB9.xVe-LbtXICAmvQfgtV9bEnCgPkUdmw7q-5L_tw8baXA
+
+###
+### Obtener todos los productos (PÚBLICA)
+GET http://localhost:3000/api/products
+
+###
+
+### Crear producto (PRIVADA - requiere JWT)
+POST http://localhost:3000/api/products
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmEwZWFiZjVkZjgyNjMyOGM1MTE4MzIyIiwiaWF0IjoxNzc5MzQ2NDQwLCJleHAiOjE3Nzk5NTEyNDB9.xVe-LbtXICAmvQfgtV9bEnCgPkUdmw7q-5L_tw8baXA
+
+{
+  "name": "Teclado Mecánico",
+  "price": 59.99,
+  "stock": 10,
+  "department": "informatica"
+}
+
+###
+
+
+
+
+
