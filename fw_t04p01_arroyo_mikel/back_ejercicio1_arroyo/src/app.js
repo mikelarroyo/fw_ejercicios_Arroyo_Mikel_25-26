@@ -1,14 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 
-//express() devuelve una aplicación HTTP.
 const app = express();
 
-// Middleware CORS
 app.use(cors());
+app.use(express.json());
 
-// Middleware para parsear JSON
-app.use(cors({ origin: 'http://localhost:4200' }));
+app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/characters', require('./routes/api/characters'));
 
 module.exports = app;
-

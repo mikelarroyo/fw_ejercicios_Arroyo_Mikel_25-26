@@ -1,0 +1,37 @@
+### AUTH
+
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "mikel",
+  "email": "mikel@fwseries.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mikel@fwseries.com",
+  "password": "1234"
+}
+
+###
+
+### CHARACTERS (requieren token - sustituye TOKEN por el del login)
+
+GET http://localhost:3000/api/characters
+Authorization: Bearer TOKEN
+
+###
+
+GET http://localhost:3000/api/characters?page=1&limit=4
+Authorization: Bearer TOKEN
+
+###
+
+GET http://localhost:3000/api/characters/6a0eb86ac06f22e7b4a00a4c
+Authorization: Bearer TOKEN
