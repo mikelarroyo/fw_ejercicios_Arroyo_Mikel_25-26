@@ -22,6 +22,128 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/api/characters
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDM4MzJkODRkOTgxOWExYzI0YzA4IiwiaWF0IjoxNzc5NDQ3OTM3LCJleHAiOjE3ODAwNTI3Mzd9.EHiMnlJiOTAg7k1VU63Rj0PAzIKsZ7-0RimEywA5Pn0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
 
 ###
+
+### GET paginado - página 1 con 4 personajes
+GET http://localhost:3000/api/characters?page=1&limit=4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+###
+
+### GET por id
+GET http://localhost:3000/api/characters/6a0eb86ac06f22e7b4a00a4c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+
+### POST correcto - debe devolver 201
+POST http://localhost:3000/api/characters
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "name": "Yamcha",
+  "age": 47,
+  "species": "humano",
+  "role": "secundario",
+  "firstAppearance": "S01E03"
+}
+
+###
+
+### POST sin name → debe devolver 400
+POST http://localhost:3000/api/characters
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "age": 47,
+  "species": "humano"
+}
+
+### PUT - actualizar solo age (opcional, debe funcionar)
+PUT http://localhost:3000/api/characters/6a0eb86ac06f22e7b4a00a4c
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "age": 40
+}
+
+###
+
+### PUT - age con texto → debe devolver 400
+PUT http://localhost:3000/api/characters/6a0eb86ac06f22e7b4a00a4c
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "age": "no soy un número"
+}
+
+###
+
+### DELETE character (sustituye el id por uno real de un personaje que quieras borrar)
+DELETE http://localhost:3000/api/characters/PEGA_ID_AQUI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+###
+
+### EPISODES
+
+GET http://localhost:3000/api/episodes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+###
+
+GET http://localhost:3000/api/episodes?season=3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+### POST episode correcto
+POST http://localhost:3000/api/episodes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "code": "S05E01",
+  "title": "El regreso de Goku",
+  "summary": "Goku vuelve tras años de entrenamiento.",
+  "year": 1997,
+  "characters": []
+}
+
+###
+
+### POST sin code → debe devolver 400
+POST http://localhost:3000/api/episodes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "title": "Sin código",
+  "year": 1997
+}
+
+###
+
+### GET episode por id (con populate de characters)
+GET http://localhost:3000/api/episodes/6a0eb9d0c06f22e7b4a00a7b
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+###
+
+### PUT - actualizar solo el year
+PUT http://localhost:3000/api/episodes/6a0eb9d0c06f22e7b4a00a7b
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+{
+  "year": 1987
+}
+
+###
+
+### DELETE episode (sustituye el id por uno que quieras borrar)
+DELETE http://localhost:3000/api/episodes/6a104ba598563cd8de746d5a
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
