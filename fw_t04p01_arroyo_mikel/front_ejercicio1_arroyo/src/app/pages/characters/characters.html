@@ -1,0 +1,28 @@
+<div class="flex flex-wrap gap-6 justify-center items-start p-8 md:p-12">
+
+  @for (character of characters(); track character._id) {
+
+    <div class="card bg-base-100 w-72 shadow-sm hover:shadow-lg transition-shadow">
+      <figure>
+        <img [src]="character.img" [alt]="character.name" class="h-56 w-full object-contain p-2" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title tracking-wide">{{ character.name }}</h2>
+        <p class="text-sm">Edad: {{ character.age }}</p>
+        <p class="text-sm">Especie: {{ character.species }}</p>
+        <p class="text-sm">Rasgo: {{ character.specialTraits[0] }}</p>
+        <div class="card-actions justify-end mt-2">
+          <div class="badge badge-outline">{{ character.role }}</div>
+        </div>
+      </div>
+    </div>
+
+  }
+
+</div>
+
+<div class="flex justify-center items-center gap-2 pb-8">
+  @for (page of pages(); track page) {
+    <button class="btn hover:btn-primary focus:btn-primary" [class.btn-active]="page === currentPage()" (click)="goToPage(page)">{{ page }}</button>
+  }
+</div>

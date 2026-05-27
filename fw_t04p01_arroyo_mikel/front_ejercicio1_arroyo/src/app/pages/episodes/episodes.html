@@ -1,0 +1,45 @@
+<div class="overflow-x-auto p-8 md:p-12">
+  <h2 class="text-3xl font-bold tracking-wide mb-6">Episodios</h2>
+  <table class="table">
+    <thead>
+      <tr class="text-sm tracking-wider">
+        <th>Código</th>
+        <th>Título</th>
+        <th>Año</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (episode of episodes(); track episode._id){
+        <tr class="hover:bg-base-200 transition-colors">
+          <td><span class="badge badge-ghost">{{ episode.code }}</span></td>
+          <td class="font-bold">{{ episode.title }}</td>
+          <td>{{ episode.year }}</td>
+          <td>
+            <button class="btn btn-ghost btn-xs hover:btn-primary focus:btn-primary" (click)="openModal(episode._id)">Ver detalles</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <dialog id="episode_modal" class="modal">
+    <div class="modal-box">
+      @if (selectedEpisode()) {
+        <h3 class="text-lg font-bold tracking-wide">{{ selectedEpisode().code }} - {{ selectedEpisode().title }}</h3>
+        <p class="py-2 text-sm">Año: {{ selectedEpisode().year }}</p>
+        <p class="py-2 text-sm">
+          <span class="font-semibold">Personajes:</span>
+          @for (character of selectedEpisode().characters; track character._id) {
+            {{ character.name }}@if (!$last) {, }
+          }
+        </p>
+      }
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn hover:btn-error focus:btn-error">Cerrar</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+</div>
