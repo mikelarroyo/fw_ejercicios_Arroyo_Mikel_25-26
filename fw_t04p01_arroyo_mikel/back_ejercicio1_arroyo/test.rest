@@ -147,3 +147,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExM
 ### DELETE episode (sustituye el id por uno que quieras borrar)
 DELETE http://localhost:3000/api/episodes/6a104ba598563cd8de746d5a
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5NDUwMDA4LCJleHAiOjE3ODAwNTQ4MDh9.Cw1--79vGtBdiGZjVzVoAixgwszF8Ae8pfDF4e_rthg
+
+
+### LOGIN RAILWAY
+POST https://dragonball-api-production.up.railway.app/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mikel1@fwseries.com",
+  "password": "1234"
+}
+
+
+### GET characters RAILWAY
+GET https://dragonball-api-production.up.railway.app/api/characters
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmExMDNjNmVhMTkyNDcyZDg4NWUzMGMzIiwiaWF0IjoxNzc5ODc3ODM4LCJleHAiOjE3ODI0Njk4Mzh9.RrQUOsmPM4FXVS6F4N0qENSUmGVAY_xy73mp84y1-jE
+
+
