@@ -1,4 +1,3 @@
 [build]
-  base = "fw_t04p01_arroyo_mikel/front_ejercicio1_arroyo"
   command = "ng build"
   publish = "dist/front_ejercicio1_arroyo/browser"
