@@ -1,1 +1,5 @@
-export interface IIngrMeasure {}
+export interface IIngrMeasure {
+  name: string
+  measure:string
+
+}

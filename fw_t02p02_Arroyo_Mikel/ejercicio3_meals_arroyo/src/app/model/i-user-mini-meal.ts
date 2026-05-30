@@ -1,1 +1,5 @@
-export interface IUserMiniMeal {}
+export interface IUserMiniMeal {
+  id: number;
+  name: string;
+  image_small: string;
+}
