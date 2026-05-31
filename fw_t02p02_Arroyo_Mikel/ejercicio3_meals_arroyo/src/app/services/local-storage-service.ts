@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IUser } from '../model/i-user';
+import { AuthSession } from '../model/auth-session';
 
 
 @Injectable({
@@ -7,6 +8,7 @@ import { IUser } from '../model/i-user';
 })
 export class LocalStorageService {
   private static readonly KEY_USERS= 'users';
+  private static readonly KEY_SESSION = 'session';
 
   public guardarUsuario( usuario : IUser): void {
     try{
@@ -60,6 +62,35 @@ export class LocalStorageService {
   } catch (error) {
     console.error('Error obteniendo próximo id:', error);
     return 1;
+  }
+}
+
+
+public setUsuarioActual(session : AuthSession):void{
+  try {
+    const JsonData= JSON.stringify(session);
+    localStorage.setItem(LocalStorageService.KEY_SESSION, JsonData);
+  }catch(error){
+    console.error('Error al guardar sesion', error);
+  }
+}
+
+public getUsuarioActual(): AuthSession | null {
+  try{
+    const jsonData = localStorage.getItem(LocalStorageService.KEY_SESSION);
+    return jsonData ? JSON.parse(jsonData) : null;
+
+  } catch (error){
+    console.error('No ha sido posible obtener el Usuario actual', error);
+    return null;
+  }
+}
+
+public removeUsuarioActual(): void {
+  try {
+    localStorage.removeItem(LocalStorageService.KEY_SESSION);
+  } catch (error) {
+    console.error('Error eliminando sesión:', error);
   }
 }
 
