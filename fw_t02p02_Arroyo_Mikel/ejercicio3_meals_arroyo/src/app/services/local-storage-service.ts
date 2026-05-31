@@ -94,4 +94,24 @@ public removeUsuarioActual(): void {
   }
 }
 
+public saveFavoriteCategory(userId: number, category: string): void{
+  try{
+    const key = `favoriteCategory_${userId}`;
+    localStorage.setItem(key,category);
+
+  }catch(error){
+    console.error('Error guardando la categoria favorita', error);
+  }
+}
+public getFavoriteCategory(userId: number): string | null {
+  try{
+    const key = `favoriteCategory_${userId}`;
+    return localStorage.getItem(key);
+
+  }catch(error){
+    console.error('Error al obtener la categoria favorita', error);
+    return null;
+  }
+}
+
 }

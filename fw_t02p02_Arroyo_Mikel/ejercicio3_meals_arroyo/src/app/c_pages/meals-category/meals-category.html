@@ -1,1 +1,45 @@
-<p>meals-category works!</p>
+<div class="container mt-5">
+  <!-- SELECT CATEGORÍAS -->
+  <div class="row mb-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <label for="categorySelect" class="form-label fw-bold">Categoría</label>
+      <select id="categorySelect" class="form-select" [(ngModel)]="selectedCategory" (change)="onCategoryChangeEvent($event)">
+        <option value="Todas las categorías">Todas las categorías</option>
+        @for (cat of categories(); track $index) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+    @if (auth.isAuthenticated()) {
+      <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end">
+        <button type="button" class="btn btn-warning w-100" (click)="onSaveFavoriteCategory()">
+          <i class="bi bi-star-fill"></i> Guardar favorita
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- GRID 8 RECETAS -->
+  <div class="row">
+    @for (meal of meals(); track meal.idMeal) {
+      <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img [src]="meal.strMealThumb" class="card-img-top" [alt]="meal.strMeal" style="height: 200px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title">{{ meal.strMeal }}</h5>
+            <p class="card-text small text-muted">
+              <strong>{{ meal.strCategory }}</strong><br>
+              {{ meal.strArea }}
+            </p>
+            @if (auth.isAuthenticated()) {
+              <a href="#" class="btn btn-primary btn-sm">Detalles</a>
+            }
+            <button type="button" class="btn btn-outline-primary btn-sm">
+              <span class="badge bg-primary">{{ meal.ingredients.length }}</span> ingredientes
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
