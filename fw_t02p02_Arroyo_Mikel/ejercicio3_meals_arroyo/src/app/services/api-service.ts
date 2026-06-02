@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IMyMeal } from '../model/i-my-meal';
 import { IIngrMeasure } from '../model/i-ingr-measure';
 import { ICategory } from '../model/i-category';
+import { MealsCategory } from '../c_pages/meals-category/meals-category';
 
 @Injectable({
   providedIn: 'root',
@@ -76,12 +77,29 @@ async get8MealsByCategory(category: string): Promise<IMyMeal[]>{
   }
 }
 
+async getMealById(id: number): Promise<IMyMeal>{
+  try{
+        const response = await fetch(`${this.API_URL}lookup.php?i=${id}`);
+        if(!response.ok){
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+        const data: any = await response.json();
+        const mealApi = data.meals[0];
+        return this.convertJsonToInterface(mealApi);
+
+  }catch(error){
+    console.error('No ha sido posible recuperar la receta por id', error);
+    throw error;
+  }
+}
+
+
 async get8RandomMeals(): Promise<IMyMeal[]> {
   const meals: IMyMeal[] = [];
   try {
     for (let i = 0; i < 8; i++) {
       const meal = await this.getRandomMeal();
-      meals.push(meal); 
+      meals.push(meal);
     }
     return meals;
   } catch (error) {

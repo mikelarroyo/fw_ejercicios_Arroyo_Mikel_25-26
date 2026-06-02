@@ -1,12 +1,19 @@
 export class AuthSession {
-
   constructor(
-    public userId: number,
-    public name: string,
-    public loginDate: Date
+    private userId: number,
+    private name: string,
+    private loginDate: Date
   ) {}
 
-  getId(): number {
+  get id(): number {
     return this.userId;
+  }
+
+  get userName(): string {
+    return this.name;
+  }
+  
+  get login(): Date {
+    return this.loginDate;
   }
 }

@@ -32,7 +32,7 @@
               {{ meal.strArea }}
             </p>
             @if (auth.isAuthenticated()) {
-              <a href="#" class="btn btn-primary btn-sm">Detalles</a>
+              <a [routerLink]="['/details', meal.idMeal]" class="btn btn-primary btn-sm">Detalles</a>
             }
             <button type="button" class="btn btn-outline-primary btn-sm">
               <span class="badge bg-primary">{{ meal.ingredients.length }}</span> ingredientes
