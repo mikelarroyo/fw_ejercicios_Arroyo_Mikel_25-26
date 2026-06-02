@@ -1,1 +1,19 @@
-<p>details-meal works!</p>
+@if (meal(); as m) {
+  <h1>{{ m.strMeal }}</h1>
+  <img src="{{ m.strMealThumb }}" alt="{{ m.strMeal }}">
+
+
+  <p>Categoría: {{ m.strCategory }}</p>
+  <p>Área: {{ m.strArea }}</p>
+
+  <h3>Ingredientes</h3>
+  <ul>
+    @for (ingredient of m.ingredients; track ingredient.name) {
+      <li>{{ ingredient.name }} - {{ ingredient.measure }}</li>
+    }
+  </ul>
+
+  <button (click)="toggleSave()">
+    @if (isSaved()) { ⭐ } @else { ☆ }
+  </button>
+}

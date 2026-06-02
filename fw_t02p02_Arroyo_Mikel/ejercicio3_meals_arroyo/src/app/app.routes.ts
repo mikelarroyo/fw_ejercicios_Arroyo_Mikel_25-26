@@ -19,4 +19,5 @@ export const routes: Routes = [
   //Sin layot
   { path: 'login', component: Login },
   { path: '**', component: NotFound },
+  
 ];

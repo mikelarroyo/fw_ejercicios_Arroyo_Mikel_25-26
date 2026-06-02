@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IUser } from '../model/i-user';
 import { AuthSession } from '../model/auth-session';
+import { AuthService } from './auth-service';
 
 
 @Injectable({
@@ -78,7 +79,11 @@ public setUsuarioActual(session : AuthSession):void{
 public getUsuarioActual(): AuthSession | null {
   try{
     const jsonData = localStorage.getItem(LocalStorageService.KEY_SESSION);
-    return jsonData ? JSON.parse(jsonData) : null;
+    if (jsonData) {
+      const data = JSON.parse(jsonData);
+      return new AuthSession(data.userId, data.name, new Date(data.loginDate));
+    }
+    return null;
 
   } catch (error){
     console.error('No ha sido posible obtener el Usuario actual', error);
@@ -94,23 +99,67 @@ public removeUsuarioActual(): void {
   }
 }
 
-public saveFavoriteCategory(userId: number, category: string): void{
-  try{
-    const key = `favoriteCategory_${userId}`;
-    localStorage.setItem(key,category);
-
-  }catch(error){
-    console.error('Error guardando la categoria favorita', error);
+public saveFavoriteCategory(userId: number, category: string): void {
+  try {
+    const usuarios = this.obtenerTodosUsuarios();
+    const usuario = usuarios.find(u => u.id === userId);
+    if (usuario) {
+      usuario.favoriteCategory = category;
+      localStorage.setItem(LocalStorageService.KEY_USERS, JSON.stringify(usuarios));
+    }
+  } catch (error) {
+    console.error('Error guardando la categoría favorita', error);
   }
 }
+
 public getFavoriteCategory(userId: number): string | null {
+  try {
+    const usuario = this.buscarUsuarioPorId(userId);
+    return usuario?.favoriteCategory || null;
+  } catch (error) {
+    console.error('Error al obtener la categoría favorita', error);
+    return null;
+  }
+}
+public getUserMeals(userId: number): any[] {
+
   try{
-    const key = `favoriteCategory_${userId}`;
-    return localStorage.getItem(key);
+    const key = `userMeals_${userId}`;
+    const jsonData = localStorage.getItem(key);
+    return jsonData? JSON.parse(jsonData) : [];
 
   }catch(error){
-    console.error('Error al obtener la categoria favorita', error);
-    return null;
+    console.error('Error al obtener comidas guardadas')
+    return[];
+  }
+}
+
+public isMealSaved(userId: number, mealId: number): boolean {
+  const recetaUsuario = this.getUserMeals(userId);
+  return recetaUsuario.some(m => m.mealId === mealId);
+}
+
+public saveMeal(userId: number, meal: any): void {
+  try {
+    const key = `userMeals_${userId}`;
+    const meals = this.getUserMeals(userId);
+    if (!meals.some(m => m.idMeal === meal.idMeal)) {
+      meals.push(meal);
+      localStorage.setItem(key, JSON.stringify(meals));
+    }
+  } catch (error) {
+    console.error('Error guardando comida:', error);
+  }
+}
+
+public removeMeal(userId: number, mealId: number): void {
+  try {
+    const key = `userMeals_${userId}`;
+    const meals = this.getUserMeals(userId);
+    const filtered = meals.filter(m => m.idMeal !== mealId);
+    localStorage.setItem(key, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('Error eliminando comida:', error);
   }
 }
 

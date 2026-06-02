@@ -4,10 +4,11 @@ import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { IMyMeal } from '../../model/i-my-meal';
 import { LocalStorageService } from '../../services/local-storage-service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-meals-category',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './meals-category.html',
   styleUrl: './meals-category.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,7 +69,7 @@ export class MealsCategory implements OnInit {
     try{
       const usuario = this.auth.getCurrentUser();
       if(usuario){
-        const categoria = this.localStorage.getFavoriteCategory(usuario.userId);
+        const categoria = this.localStorage.getFavoriteCategory(usuario.id);
         if (categoria){
           await this.onCategoryChange(categoria);
         } else {
@@ -86,7 +87,7 @@ export class MealsCategory implements OnInit {
       const usuario = this.auth.getCurrentUser();
       if(usuario){
         const categoria = this.selectedCategory();
-        this.localStorage.saveFavoriteCategory(usuario.userId, categoria);
+        this.localStorage.saveFavoriteCategory(usuario.id, categoria);
         alert(`Categoría favorita guardada: ${categoria}`);
       }
     } catch(error){
