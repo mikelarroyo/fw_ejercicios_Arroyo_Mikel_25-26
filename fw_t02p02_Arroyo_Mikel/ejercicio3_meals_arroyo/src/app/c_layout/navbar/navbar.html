@@ -6,6 +6,13 @@
           Home
         </a>
       </li>
+      @if (auth.isAuthenticated()) {
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/plan-week" routerLinkActive="active">
+            Plan Semanal
+          </a>
+        </li>
+      }
     </ul>
   </div>
 </nav>

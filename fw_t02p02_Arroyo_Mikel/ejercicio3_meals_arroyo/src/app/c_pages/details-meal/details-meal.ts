@@ -1,9 +1,9 @@
-import { Component, input, signal, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, input, signal, OnInit, ChangeDetectionStrategy, inject, effect } from '@angular/core';
 import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { IMyMeal } from '../../model/i-my-meal';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-details-meal',
@@ -12,20 +12,22 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailsMeal implements OnInit {
-  private route = inject(ActivatedRoute);
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private localStorage= inject(LocalStorageService);
+  private router = inject(Router);
 
   id = input.required<number>(); //id del padre que se lo pasamos con input
   meal= signal<IMyMeal | null>(null);
   isSaved = signal(false);
 
-  ngOnInit(): void {
-    const id= this.id();
-    this.loadMeal(id);
-
+  constructor() {
+    effect(() => {
+      this.loadMeal(this.id());
+    });
   }
+
+  ngOnInit(): void {}
 
   private async loadMeal(id: number): Promise<void> {
     try {
@@ -34,7 +36,9 @@ export class DetailsMeal implements OnInit {
 
       const session = this.auth.getCurrentUser();
       if(session) {
-        this.isSaved.set(this.localStorage.isMealSaved(session.id, id));
+        const userMiniMeals = this.localStorage.getUserMiniMeals(session.id);
+        const isSaved = userMiniMeals.some(m => Number(m.mealId) === id);
+        this.isSaved.set(isSaved);
       }
 
     } catch (error) {
@@ -43,17 +47,27 @@ export class DetailsMeal implements OnInit {
   }
 
   toggleSave(): void {
-  const meal = this.meal();
-  const session = this.auth.getCurrentUser()!;
+    const meal = this.meal();
+    const session = this.auth.getCurrentUser()!;
 
-  if (this.isSaved()) {
-    this.localStorage.removeMeal(session.id, meal!.idMeal);
-  } else {
-    this.localStorage.saveMeal(session.id, meal!);
+    console.log('toggleSave llamado. isSaved:', this.isSaved());
+
+    if (this.isSaved()) {
+      console.log('Eliminando receta');
+      this.localStorage.removeMiniMeal(session.id, meal!.idMeal);
+      this.router.navigate(['/']);
+    } else {
+      console.log('Guardando receta');
+      const userMiniMeal = {
+        mealId: meal!.idMeal,
+        strMeal: meal!.strMeal,
+        strMealThumb: meal!.strMealThumb
+      };
+      this.localStorage.saveMiniMeal(session.id, userMiniMeal);
+      this.isSaved.set(true);
+      console.log('isSaved actualizado a:', this.isSaved());
+    }
   }
-
-  this.isSaved.set(!this.isSaved());
-}
 
 
 

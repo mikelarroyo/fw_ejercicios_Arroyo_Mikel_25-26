@@ -1,5 +1,5 @@
 export interface IUserMiniMeal {
-  id: number;
-  name: string;
-  image_small: string;
+  mealId: number;
+  strMeal: string;
+  strMealThumb: string;
 }

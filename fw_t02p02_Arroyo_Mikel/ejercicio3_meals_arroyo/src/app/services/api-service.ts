@@ -68,8 +68,20 @@ async get8MealsByCategory(category: string): Promise<IMyMeal[]>{
       throw new Error(`HTTP Error: ${response.status}`);
     }
     const data: any = await response.json();
-    const meals = data.meals.slice(0,8);
-    return meals.map((meal: any) => this.convertJsonToInterface(meal));
+    const todasLasRecetas = data.meals;
+    const recetasElegidas: any[] = [];
+    const indicesElegidos = new Set<number>();
+
+    while (indicesElegidos.size < 8 && indicesElegidos.size < todasLasRecetas.length) {
+      const indiceAleatorio = Math.floor(Math.random() * todasLasRecetas.length);
+      indicesElegidos.add(indiceAleatorio);
+    }
+
+    indicesElegidos.forEach(indice => {
+      recetasElegidas.push(todasLasRecetas[indice]);
+    });
+
+    return recetasElegidas.map((meal: any) => this.convertJsonToInterface(meal));
 
   } catch(error){
     console.error('No ha sido posible obtener las recetas aleatoriamente', error)
@@ -95,13 +107,9 @@ async getMealById(id: number): Promise<IMyMeal>{
 
 
 async get8RandomMeals(): Promise<IMyMeal[]> {
-  const meals: IMyMeal[] = [];
   try {
-    for (let i = 0; i < 8; i++) {
-      const meal = await this.getRandomMeal();
-      meals.push(meal);
-    }
-    return meals;
+    const promises = Array.from({ length: 8 }, () => this.getRandomMeal());
+    return await Promise.all(promises);
   } catch (error) {
     console.error('Error obteniendo 8 recetas aleatorias:', error);
     return [];
@@ -123,6 +131,19 @@ private extractIngredients(mealApi: any): IIngrMeasure[] {
   return ingredients;
 }
 
-
+async searchMealsByIngredient(ingredient: string): Promise<IMyMeal[]> {
+  try {
+    const response = await fetch(`${this.API_URL}filter.php?i=${ingredient}`);
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
+    const data: any = await response.json();
+    if (!data.meals) return [];
+    return data.meals.map((meal: any) => this.convertJsonToInterface(meal));
+  } catch (error) {
+    console.error('Error buscando recetas por ingrediente:', error);
+    return [];
+  }
+}
 
 }

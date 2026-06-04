@@ -1,4 +1,6 @@
-@if (mealId(); as id) {
-  <app-details-meal [id]="id"></app-details-meal>
-  <app-details-save [id]="id"></app-details-save>
-}
+<div class="container mt-5">
+  @if (mealId(); as id) {
+    <app-details-meal [id]="id"></app-details-meal>
+    <app-details-save [id]="id"></app-details-save>
+  }
+</div>

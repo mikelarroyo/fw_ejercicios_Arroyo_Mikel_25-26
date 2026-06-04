@@ -1,5 +1,5 @@
 export interface IWeeklyPlanDay {
   day: string;
-  lunchMealId?: number;
-  dinnerMealId?: number;
+  lunchMealId?: number | null;
+  dinnerMealId?: number | null;
 }
