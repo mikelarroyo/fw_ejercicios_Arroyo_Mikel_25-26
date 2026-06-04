@@ -1,4 +1,4 @@
-import { Component, input, signal, OnInit, ChangeDetectionStrategy, inject, effect } from '@angular/core';
+import { Component, input, signal, OnInit, ChangeDetectionStrategy, inject, effect, output } from '@angular/core';
 import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
@@ -17,9 +17,10 @@ export class DetailsMeal implements OnInit {
   private localStorage= inject(LocalStorageService);
   private router = inject(Router);
 
-  id = input.required<number>(); //id del padre que se lo pasamos con input
+  id = input.required<number>();
   meal= signal<IMyMeal | null>(null);
   isSaved = signal(false);
+  isSavedChange = output<boolean>();
 
   constructor() {
     effect(() => {
@@ -39,6 +40,7 @@ export class DetailsMeal implements OnInit {
         const userMiniMeals = this.localStorage.getUserMiniMeals(session.id);
         const isSaved = userMiniMeals.some(m => Number(m.mealId) === id);
         this.isSaved.set(isSaved);
+        this.isSavedChange.emit(isSaved);
       }
 
     } catch (error) {
@@ -53,11 +55,11 @@ export class DetailsMeal implements OnInit {
     console.log('toggleSave llamado. isSaved:', this.isSaved());
 
     if (this.isSaved()) {
-      console.log('Eliminando receta');
       this.localStorage.removeMiniMeal(session.id, meal!.idMeal);
+      this.isSaved.set(false);
+      this.isSavedChange.emit(false);
       this.router.navigate(['/']);
     } else {
-      console.log('Guardando receta');
       const userMiniMeal = {
         mealId: meal!.idMeal,
         strMeal: meal!.strMeal,
@@ -65,7 +67,7 @@ export class DetailsMeal implements OnInit {
       };
       this.localStorage.saveMiniMeal(session.id, userMiniMeal);
       this.isSaved.set(true);
-      console.log('isSaved actualizado a:', this.isSaved());
+      this.isSavedChange.emit(true);
     }
   }
 
