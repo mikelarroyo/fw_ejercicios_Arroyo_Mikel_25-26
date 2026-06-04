@@ -1,19 +1,33 @@
-@if (meal(); as m) {
-  <h1>{{ m.strMeal }}</h1>
-  <img src="{{ m.strMealThumb }}" alt="{{ m.strMeal }}">
+<div class="card mb-4">
+  <div class="card-header">
+    <h3 class="mb-0">Detalles de la Receta</h3>
+  </div>
+  <div class="card-body">
+    @if (meal(); as m) {
+      <h2 class="mb-3">{{ m.strMeal }}</h2>
 
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <img [src]="m.strMealThumb" [alt]="m.strMeal" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;">
+        </div>
+        <div class="col-md-6">
+          <p><strong>Categoría:</strong> {{ m.strCategory }}</p>
+          <p><strong>Área:</strong> {{ m.strArea }}</p>
 
-  <p>Categoría: {{ m.strCategory }}</p>
-  <p>Área: {{ m.strArea }}</p>
+          <h5 class="mt-4">Ingredientes</h5>
+          <ul class="list-unstyled">
+            @for (ingredient of m.ingredients; track ingredient.name + '-' + ingredient.measure) {
+              <li>{{ ingredient.name }} - {{ ingredient.measure }}</li>
+            }
+          </ul>
+        </div>
+      </div>
 
-  <h3>Ingredientes</h3>
-  <ul>
-    @for (ingredient of m.ingredients; track ingredient.name) {
-      <li>{{ ingredient.name }} - {{ ingredient.measure }}</li>
+      <!-- BOTÓN GUARDAR RECETA -->
+      <button type="button" class="btn btn-primary btn-lg" (click)="toggleSave()">
+        <i class="bi bi-bookmark-fill"></i>
+        {{ isSaved() ? 'Eliminar de guardadas' : 'Guardar receta' }}
+      </button>
     }
-  </ul>
-
-  <button (click)="toggleSave()">
-    @if (isSaved()) { ⭐ } @else { ☆ }
-  </button>
-}
+  </div>
+</div>

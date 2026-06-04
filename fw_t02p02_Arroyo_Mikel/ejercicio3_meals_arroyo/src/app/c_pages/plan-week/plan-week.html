@@ -1,1 +1,180 @@
-<p>plan-week works!</p>
+<div class="container mt-5">
+  <!-- SECCIÓN 1: Crear plan semanal -->
+  <section class="mb-5">
+    <h2 class="mb-4">Crear Plan Semanal - Semana {{ currentWeek() }}</h2>
+
+    <!-- Buscador de ingredientes -->
+    <div class="card mb-4 p-3">
+      <h5>Buscador de Recetas por Ingrediente</h5>
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Ej: chicken, beef, pasta..."
+          [value]="ingredientSearch()"
+          (input)="ingredientSearch.set($any($event.target).value)"
+        />
+      </div>
+
+      @if (loadingMeals()) {
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      }
+
+      @if (filteredMeals().length > 0) {
+        <div class="row">
+          @for (meal of filteredMeals(); track meal.idMeal) {
+            <div class="col-md-3 mb-3">
+              <div class="card" style="cursor: pointer;" (click)="mealToAssign.set(meal)">
+                <img [src]="meal.strMealThumb" class="card-img-top" alt="{{ meal.strMeal }}" />
+                <div class="card-body">
+                  <h6 class="card-title">{{ meal.strMeal }}</h6>
+                  <small class="text-muted">{{ meal.strCategory }} • {{ meal.strArea }}</small>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Modal para seleccionar día/momento -->
+        @if (mealToAssign(); as meal) {
+          <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ meal.strMeal }}</h5>
+                  <button type="button" class="btn-close" (click)="mealToAssign.set(null)"></button>
+                </div>
+                <div class="modal-body">
+                  <p>¿A qué día y momento asignar?</p>
+                  <div class="form-group mb-3">
+                    <label>Día:</label>
+                    <select class="form-control" [(ngModel)]="selectedDay">
+                      @for (day of days; track day) {
+                        <option [value]="day">{{ day }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label>Momento:</label>
+                    <select class="form-control" [(ngModel)]="selectedMomento">
+                      <option value="lunch">Comida</option>
+                      <option value="dinner">Cena</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="mealToAssign.set(null)">Cancelar</button>
+                  <button type="button" class="btn btn-primary" (click)="asignarPorBuscador(selectedDay, selectedMomento, meal)">Asignar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Tabla para asignar recetas -->
+    @if (plan()) {
+      <div class="card mb-4 p-3">
+        <h5>Asignar Recetas a Días</h5>
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Comida</th>
+              <th>Cena</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (day of plan()!.days; track day.day) {
+              <tr>
+                <td><strong>{{ day.day }}</strong></td>
+                <td>
+                  @if (day.lunchMealId) {
+                    <div>
+                      <span>{{ getMealNameSync(day.lunchMealId) }}</span>
+                      <button (click)="quitarReceta(day.day, 'lunch')" class="btn btn-sm btn-danger ms-2">Quitar</button>
+                    </div>
+                  } @else {
+                    <div>
+                      <span class="text-muted">Sin asignar</span>
+                      <button (click)="abrirSelectorReceta(day.day, 'lunch')" class="btn btn-sm btn-primary ms-2">Asignar por ID</button>
+                    </div>
+                  }
+                </td>
+                <td>
+                  @if (day.dinnerMealId) {
+                    <div>
+                      <span>{{ getMealNameSync(day.dinnerMealId) }}</span>
+                      <button (click)="quitarReceta(day.day, 'dinner')" class="btn btn-sm btn-danger ms-2">Quitar</button>
+                    </div>
+                  } @else {
+                    <div>
+                      <span class="text-muted">Sin asignar</span>
+                      <button (click)="abrirSelectorReceta(day.day, 'dinner')" class="btn btn-sm btn-primary ms-2">Asignar por ID</button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Botones Guardar / Cancelar -->
+      <div class="d-flex gap-2">
+        <button (click)="guardarCambios()" class="btn btn-success">Guardar Cambios</button>
+        <button (click)="cancelar()" class="btn btn-secondary">Cancelar</button>
+      </div>
+    }
+  </section>
+
+  <hr />
+
+  <!-- SECCIÓN 2: Tabla con planes semanales -->
+  <section>
+    <h2 class="mb-4">Mis Planes Semanales</h2>
+
+    @if (allPlans().length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Receta Lunes (Comida)</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of allPlans(); track p.id) {
+              <tr [class.table-warning]="isCurrentWeek(p.id)">
+                <td>
+                  <strong>{{ p.id }}</strong>
+                  @if (isCurrentWeek(p.id)) {
+                    <span class="badge bg-warning text-dark ms-2">Actual</span>
+                  }
+                </td>
+                <td>
+                  @if (p.days[0]?.lunchMealId) {
+                    <a href="#">{{ getMealNameSync(p.days[0].lunchMealId) }}</a>
+                  } @else {
+                    <span class="text-muted">Sin receta</span>
+                  }
+                </td>
+                <td>
+                  <button (click)="deletePlan(p.id)" class="btn btn-sm btn-danger">Borrar</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="alert alert-info">
+        No tienes planes semanales. ¡Crea uno arriba!
+      </div>
+    }
+  </section>
+</div>
