@@ -3,7 +3,6 @@ import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { IMyMeal } from '../../model/i-my-meal';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-details-meal',
@@ -15,7 +14,6 @@ export class DetailsMeal implements OnInit {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private localStorage= inject(LocalStorageService);
-  private router = inject(Router);
 
   id = input.required<number>();
   meal= signal<IMyMeal | null>(null);
@@ -58,7 +56,6 @@ export class DetailsMeal implements OnInit {
       this.localStorage.removeMiniMeal(session.id, meal!.idMeal);
       this.isSaved.set(false);
       this.isSavedChange.emit(false);
-      this.router.navigate(['/']);
     } else {
       const userMiniMeal = {
         mealId: meal!.idMeal,
