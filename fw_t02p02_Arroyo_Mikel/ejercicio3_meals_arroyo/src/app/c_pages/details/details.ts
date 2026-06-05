@@ -13,11 +13,9 @@ import { DetailsSave } from '../details-save/details-save';
 export class Details implements OnInit {
   private route = inject(ActivatedRoute);
   mealId = signal<number | null>(null);
-  isSaved = signal<boolean>(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     this.mealId.set(Number(id));
   }
-
 }
