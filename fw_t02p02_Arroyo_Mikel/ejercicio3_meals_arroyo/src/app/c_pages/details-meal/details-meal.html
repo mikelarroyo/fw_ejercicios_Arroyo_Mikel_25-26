@@ -31,3 +31,8 @@
     }
   </div>
 </div>
+
+<!-- FORMULARIO VALORACIÓN - SOLO SI ESTÁ GUARDADA -->
+@if (isSaved()) {
+  <app-details-save [id]="id()"></app-details-save>
+}

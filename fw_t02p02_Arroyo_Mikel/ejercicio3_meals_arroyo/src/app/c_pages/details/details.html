@@ -1,8 +1,5 @@
 <div class="container mt-5">
   @if (mealId(); as id) {
-    <app-details-meal [id]="id" (isSavedChange)="isSaved.set($event)"></app-details-meal>
-    @if (isSaved()) {
-      <app-details-save [id]="id"></app-details-save>
-    }
+    <app-details-meal [id]="id"></app-details-meal>
   }
 </div>
