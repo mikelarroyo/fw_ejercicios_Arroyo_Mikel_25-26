@@ -7,13 +7,7 @@ import { PlanWeekList } from './plan-week-list/plan-week-list';
   selector: 'app-plan-week',
   standalone: true,
   imports: [CommonModule, PlanWeekCreate, PlanWeekList],
-  template: `
-    <div class="container mt-5">
-      <app-plan-week-create></app-plan-week-create>
-      <hr class="my-5">
-      <app-plan-week-list></app-plan-week-list>
-    </div>
-  `,
+  templateUrl: './plan-week.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanWeek {}
