@@ -91,30 +91,26 @@
             @for (day of plan()!.days; track day.day) {
               <tr>
                 <td><strong>{{ day.day }}</strong></td>
-                <td>
+                <td style="text-align: center;">
                   @if (day.lunchMealId) {
                     <div>
                       <span>{{ getMealNameSync(day.lunchMealId) }}</span>
-                      <button (click)="quitarReceta(day.day, 'lunch')" class="btn btn-sm btn-danger ms-2">Quitar</button>
+                      <br>
+                      <button (click)="quitarReceta(day.day, 'lunch')" class="btn btn-sm btn-danger mt-2">Quitar</button>
                     </div>
                   } @else {
-                    <div>
-                      <span class="text-muted">Sin asignar</span>
-                      <button (click)="abrirSelectorReceta(day.day, 'lunch')" class="btn btn-sm btn-primary ms-2">Asignar por ID</button>
-                    </div>
+                    <span class="text-muted">Sin asignar</span>
                   }
                 </td>
-                <td>
+                <td style="text-align: center;">
                   @if (day.dinnerMealId) {
                     <div>
                       <span>{{ getMealNameSync(day.dinnerMealId) }}</span>
-                      <button (click)="quitarReceta(day.day, 'dinner')" class="btn btn-sm btn-danger ms-2">Quitar</button>
+                      <br>
+                      <button (click)="quitarReceta(day.day, 'dinner')" class="btn btn-sm btn-danger mt-2">Quitar</button>
                     </div>
                   } @else {
-                    <div>
-                      <span class="text-muted">Sin asignar</span>
-                      <button (click)="abrirSelectorReceta(day.day, 'dinner')" class="btn btn-sm btn-primary ms-2">Asignar por ID</button>
-                    </div>
+                    <span class="text-muted">Sin asignar</span>
                   }
                 </td>
               </tr>

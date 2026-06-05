@@ -161,13 +161,6 @@ export class PlanWeek implements OnInit {
     return this.mealNames().get(mealId) || `Cargando...`;
   }
 
-  abrirSelectorReceta(day: string, momento: 'lunch' | 'dinner'): void {
-    const mealId = prompt(`Ingresa el ID de la receta para ${day} (${momento}):`);
-    if (mealId && !isNaN(Number(mealId))) {
-      this.asignarReceta(day, momento, Number(mealId));
-    }
-  }
-
   asignarPorBuscador(day: string, momento: 'lunch' | 'dinner', meal: IMyMeal): void {
     const mealId = meal.idMeal ? Number(meal.idMeal) : 0;
     if (mealId > 0) {
