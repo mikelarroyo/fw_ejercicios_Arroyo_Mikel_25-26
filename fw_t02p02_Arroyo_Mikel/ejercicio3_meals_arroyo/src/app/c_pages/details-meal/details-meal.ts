@@ -35,17 +35,13 @@ export class DetailsMeal implements OnInit {
       const meal = await this.api.getMealById(id);
       this.meal.set(meal);
 
-      // Buscar en localStorage si está guardada
       const session = this.auth.getCurrentUser();
-      if (session) {
-        const userMeals = this.localStorage.getUserMeals(session.id);
-        const userMiniMeals = this.localStorage.getUserMiniMeals(session.id);
+      if (!session) return;
 
-        const enMeals = userMeals.some(m => m.mealId === id);
-        const enMiniMeals = userMiniMeals.some(m => Number(m.mealId) === id);
+      const userMeals = this.localStorage.getUserMeals(session.id);
+      const guardada = userMeals.some(m => m.mealId === id);
+      this.isSaved.set(guardada);
 
-        this.isSaved.set(enMeals || enMiniMeals);
-      }
     } catch (error) {
       console.error('Error cargando receta:', error);
     }
