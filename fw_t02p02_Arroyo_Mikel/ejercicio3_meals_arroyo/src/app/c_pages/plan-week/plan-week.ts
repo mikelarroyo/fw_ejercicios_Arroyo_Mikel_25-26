@@ -37,6 +37,18 @@ export class PlanWeek implements OnInit {
   selectedMomento: 'lunch' | 'dinner' = 'lunch';
   mealCache = signal<Map<number, IMyMeal>>(new Map());
 
+  constructor() {
+    // Efecto para búsqueda de ingredientes
+    effect(() => {
+      const search = this.ingredientSearch();
+      if (search.trim().length > 0) {
+        this.searchByIngredient(search);
+      } else {
+        this.filteredMeals.set([]);
+      }
+    });
+  }
+
   ngOnInit(): void {
     const session = this.auth.getCurrentUser();
     if (session) {
@@ -55,16 +67,6 @@ export class PlanWeek implements OnInit {
       this.loadMealNames(plan);
       this.loadAllPlans(session.id).catch(err => console.error('Error cargando planes:', err));
     }
-
-    // Efecto para búsqueda de ingredientes
-    effect(() => {
-      const search = this.ingredientSearch();
-      if (search.trim().length > 0) {
-        this.searchByIngredient(search);
-      } else {
-        this.filteredMeals.set([]);
-      }
-    });
   }
 
   private async loadMealNames(plan: IWeeklyPlan): Promise<void> {
