@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../services/auth-service';
-import { LocalStorageService } from '../../../services/local-storage-service';
-import { ApiService } from '../../../services/api-service';
-import { Util } from '../../../model/util';
-import { IMyMeal } from '../../../model/i-my-meal';
-import { IWeeklyPlan } from '../../../model/i-weekly-plan';
+import { AuthService } from '../../services/auth-service';
+import { LocalStorageService } from '../../services/local-storage-service';
+import { ApiService } from '../../services/api-service';
+import { Util } from '../../model/util';
+import { IMyMeal } from '../../model/i-my-meal';
+import { IWeeklyPlan } from '../../model/i-weekly-plan';
 
 @Component({
   selector: 'app-plan-week-create',

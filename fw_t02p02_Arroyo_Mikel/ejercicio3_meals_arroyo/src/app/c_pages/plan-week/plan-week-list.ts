@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/auth-service';
-import { LocalStorageService } from '../../../services/local-storage-service';
-import { Util } from '../../../model/util';
-import { IWeeklyPlan } from '../../../model/i-weekly-plan';
+import { AuthService } from '../../services/auth-service';
+import { LocalStorageService } from '../../services/local-storage-service';
+import { Util } from '../../model/util';
+import { IWeeklyPlan } from '../../model/i-weekly-plan';
 
 @Component({
   selector: 'app-plan-week-list',
