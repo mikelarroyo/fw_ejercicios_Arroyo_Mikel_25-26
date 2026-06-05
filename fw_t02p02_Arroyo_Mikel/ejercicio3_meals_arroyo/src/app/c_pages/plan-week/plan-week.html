@@ -3,6 +3,57 @@
   <section class="mb-5">
     <h2 class="mb-4">Crear Plan Semanal - Semana {{ currentWeek() }}</h2>
 
+    <!-- Tabla para asignar recetas - SIEMPRE VISIBLE -->
+    @if (plan()) {
+      <div class="card mb-4 p-3">
+        <h5>Asignar Recetas a Días</h5>
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Comida</th>
+              <th>Cena</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (day of plan()!.days; track day.day) {
+              <tr>
+                <td><strong>{{ day.day }}</strong></td>
+                <td style="text-align: center;">
+                  @if (day.lunchMealId) {
+                    <div>
+                      <span>{{ getMealNameSync(day.lunchMealId) }}</span>
+                      <br>
+                      <button (click)="quitarReceta(day.day, 'lunch')" class="btn btn-sm btn-danger mt-2">Quitar</button>
+                    </div>
+                  } @else {
+                    <span class="text-muted">Sin asignar</span>
+                  }
+                </td>
+                <td style="text-align: center;">
+                  @if (day.dinnerMealId) {
+                    <div>
+                      <span>{{ getMealNameSync(day.dinnerMealId) }}</span>
+                      <br>
+                      <button (click)="quitarReceta(day.day, 'dinner')" class="btn btn-sm btn-danger mt-2">Quitar</button>
+                    </div>
+                  } @else {
+                    <span class="text-muted">Sin asignar</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Botones Guardar / Cancelar -->
+      <div class="d-flex gap-2 mb-4">
+        <button (click)="guardarCambios()" class="btn btn-success">Guardar Cambios</button>
+        <button (click)="cancelar()" class="btn btn-secondary">Cancelar</button>
+      </div>
+    }
+
     <!-- Buscador de ingredientes -->
     <div class="card mb-4 p-3">
       <h5>Buscador de Recetas por Ingrediente</h5>
@@ -74,57 +125,6 @@
         }
       }
     </div>
-
-    <!-- Tabla para asignar recetas -->
-    @if (plan()) {
-      <div class="card mb-4 p-3">
-        <h5>Asignar Recetas a Días</h5>
-        <table class="table table-bordered table-sm">
-          <thead>
-            <tr>
-              <th>Día</th>
-              <th>Comida</th>
-              <th>Cena</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (day of plan()!.days; track day.day) {
-              <tr>
-                <td><strong>{{ day.day }}</strong></td>
-                <td style="text-align: center;">
-                  @if (day.lunchMealId) {
-                    <div>
-                      <span>{{ getMealNameSync(day.lunchMealId) }}</span>
-                      <br>
-                      <button (click)="quitarReceta(day.day, 'lunch')" class="btn btn-sm btn-danger mt-2">Quitar</button>
-                    </div>
-                  } @else {
-                    <span class="text-muted">Sin asignar</span>
-                  }
-                </td>
-                <td style="text-align: center;">
-                  @if (day.dinnerMealId) {
-                    <div>
-                      <span>{{ getMealNameSync(day.dinnerMealId) }}</span>
-                      <br>
-                      <button (click)="quitarReceta(day.day, 'dinner')" class="btn btn-sm btn-danger mt-2">Quitar</button>
-                    </div>
-                  } @else {
-                    <span class="text-muted">Sin asignar</span>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Botones Guardar / Cancelar -->
-      <div class="d-flex gap-2">
-        <button (click)="guardarCambios()" class="btn btn-success">Guardar Cambios</button>
-        <button (click)="cancelar()" class="btn btn-secondary">Cancelar</button>
-      </div>
-    }
   </section>
 
   <hr />
