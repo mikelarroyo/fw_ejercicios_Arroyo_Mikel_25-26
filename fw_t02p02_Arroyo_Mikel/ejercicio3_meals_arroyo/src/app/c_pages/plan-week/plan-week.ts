@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, signal, effect, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { ApiService } from '../../services/api-service';
@@ -10,7 +11,7 @@ import { IMyMeal } from '../../model/i-my-meal';
 
 @Component({
   selector: 'app-plan-week',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './plan-week.html',
   styleUrl: './plan-week.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +20,7 @@ export class PlanWeek implements OnInit {
   private auth = inject(AuthService);
   private localStorage = inject(LocalStorageService);
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
 
   plan = signal<IWeeklyPlan | null>(null);
   currentWeek = signal<string>('');
@@ -33,6 +35,7 @@ export class PlanWeek implements OnInit {
   mealToAssign = signal<IMyMeal | null>(null);
   selectedDay = 'Monday';
   selectedMomento: 'lunch' | 'dinner' = 'lunch';
+  mealCache = signal<Map<number, IMyMeal>>(new Map());
 
   ngOnInit(): void {
     const session = this.auth.getCurrentUser();
@@ -50,7 +53,7 @@ export class PlanWeek implements OnInit {
       }
       this.plan.set(plan);
       this.loadMealNames(plan);
-      this.loadAllPlans(session.id);
+      this.loadAllPlans(session.id).catch(err => console.error('Error cargando planes:', err));
     }
 
     // Efecto para búsqueda de ingredientes
@@ -76,10 +79,19 @@ export class PlanWeek implements OnInit {
     }
   }
 
-  private loadAllPlans(userId: number): void {
+  private async loadAllPlans(userId: number): Promise<void> {
     const plans = this.localStorage.getAllWeeklyPlans(userId);
     const sorted = plans.sort((a, b) => b.id.localeCompare(a.id));
     this.allPlans.set(sorted);
+
+    // Pre-cargar imágenes de todas las recetas
+    for (const plan of sorted) {
+      for (const day of plan.days) {
+        if (day.lunchMealId) await this.getMealForDisplay(day.lunchMealId);
+        if (day.dinnerMealId) await this.getMealForDisplay(day.dinnerMealId);
+      }
+    }
+    this.cdr.markForCheck();
   }
 
   private async searchByIngredient(ingredient: string): Promise<void> {
@@ -212,5 +224,25 @@ export class PlanWeek implements OnInit {
 
   isCurrentWeek(planId: string): boolean {
     return planId === this.currentWeek();
+  }
+
+  async getMealForDisplay(mealId: number | null | undefined): Promise<IMyMeal | null> {
+    if (!mealId) return null;
+
+    const cached = this.mealCache().get(mealId);
+    if (cached) return cached;
+
+    try {
+      const meal = await this.api.getMealById(mealId);
+      this.mealCache.set(new Map(this.mealCache()).set(mealId, meal));
+      return meal;
+    } catch {
+      return null;
+    }
+  }
+
+  getMealForDisplaySync(mealId: number | null | undefined): IMyMeal | null {
+    if (!mealId) return null;
+    return this.mealCache().get(mealId) || null;
   }
 }
