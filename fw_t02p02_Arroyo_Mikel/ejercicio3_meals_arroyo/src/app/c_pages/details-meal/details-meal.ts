@@ -1,5 +1,4 @@
-import { Component, input, signal, OnInit, ChangeDetectionStrategy, inject, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, signal, inject, effect } from '@angular/core';
 import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
@@ -8,12 +7,11 @@ import { IMyMeal } from '../../model/i-my-meal';
 
 @Component({
   selector: 'app-details-meal',
-  imports: [CommonModule, DetailsSave],
+  imports: [DetailsSave],
   templateUrl: './details-meal.html',
   styleUrl: './details-meal.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DetailsMeal implements OnInit {
+export class DetailsMeal {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private localStorage = inject(LocalStorageService);
@@ -28,8 +26,6 @@ export class DetailsMeal implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
-
   private async cargarReceta(id: number): Promise<void> {
     try {
       const meal = await this.api.getMealById(id);
@@ -38,8 +34,8 @@ export class DetailsMeal implements OnInit {
       const session = this.auth.getCurrentUser();
       if (!session) return;
 
-      const userMeals = this.localStorage.getUserMeals(session.userId);
-      const guardada = userMeals.some(m => m.mealId === id);
+      const userMeals = this.localStorage.getUserMiniMeals(session.userId);
+      const guardada = userMeals.some(m => String(m.mealId) === String(id));
       this.isSaved.set(guardada);
 
     } catch (error) {
