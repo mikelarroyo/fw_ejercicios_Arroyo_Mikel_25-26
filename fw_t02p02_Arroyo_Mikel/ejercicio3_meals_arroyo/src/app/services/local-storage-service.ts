@@ -3,8 +3,6 @@ import { IUser } from '../model/i-user';
 import { AuthSession } from '../model/auth-session';
 import { IWeeklyPlan } from '../model/i-weekly-plan';
 import { IUserMiniMeal } from '../model/i-user-mini-meal';
-import { PlanWeekList } from '../c_pages/plan-week-list/plan-week-list';
-
 @Injectable({
   providedIn: 'root',
 })
