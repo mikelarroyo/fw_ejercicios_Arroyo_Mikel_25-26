@@ -51,7 +51,7 @@ export class DetailsSave implements OnInit{
       const mealData = await this.api.getMealById(id);
       this.meal.set(mealData);
 
-      const userMeals = this.localStorage.getUserMeals(session.id);
+      const userMeals = this.localStorage.getUserMeals(session.userId);
       const savedMeal = userMeals.find(m => m.mealId === id);
 
       if (savedMeal) {
@@ -94,7 +94,7 @@ export class DetailsSave implements OnInit{
     }
 
     const userMeal = {
-      userId: session.id,
+      userId: session.userId,
       mealId: id,
       saveDate: formValue.saveDate || new Date().toISOString(),
       status: formValue.status,
@@ -106,7 +106,7 @@ export class DetailsSave implements OnInit{
       strMealThumb: mealData.strMealThumb,
       ingredients: mealData.ingredients
     };
-    this.localStorage.saveMeal(session.id, userMeal);
+    this.localStorage.saveMeal(session.userId, userMeal);
     this.location.back();
   }
 

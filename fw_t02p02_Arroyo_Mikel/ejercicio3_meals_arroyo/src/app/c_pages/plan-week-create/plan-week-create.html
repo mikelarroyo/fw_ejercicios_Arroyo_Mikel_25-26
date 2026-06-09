@@ -1,8 +1,82 @@
-<div class="card mb-5">
-  <div class="card-header">
-    <h3>Crear Plan Semanal</h3>
-  </div>
-  <div class="card-body">
-    <!-- Aquí va el contenido del create -->
-  </div>
+<div class="container mt-4">
+  <h2 class="mb-3">Crear plan semanal</h2>
+
+  <form [formGroup]="fechaForm" (ngSubmit)="handleFechaSeleccionada()" class="d-flex gap-2 align-items-center mb-4">
+    <input type="date" formControlName="fecha" class="form-control w-auto">
+    <button class="btn btn-primary" type="submit">Seleccionar semana</button>
+  </form>
+
+  @if (fechaSeleccionada()) {
+    <div class="mb-4">
+      <form [formGroup]="ingredienteForm" (ngSubmit)="buscarIngrediente()" class="d-flex gap-2 align-items-center">
+        <input type="text" formControlName="buscarIngrediente" class="form-control w-auto" placeholder="Buscar por ingrediente...">
+        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+      </form>
+    </div>
+
+    @if (platosEncontrados()) {
+      <div class="row mb-4">
+        @for (plato of platosEncontrados(); track plato.mealId) {
+          <div class="col-md-2 mb-2">
+            <div class="card h-100">
+              <img class="card-img-top" [src]="plato.strMealThumb" alt="Card image cap">
+              <div class="card-body p-2">
+                <h6 class="card-title">{{ plato.strMeal }}</h6>
+                <button class="btn btn-sm btn-outline-success w-100" (click)="seleccionarReceta(plato)">Seleccionar</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (platoSeleccionado()) {
+      <p class="text-success fw-semibold mb-3">Receta seleccionada: {{ platoSeleccionado()!.strMeal }}</p>
+    }
+
+    <div class="table-responsive mb-3">
+      <table class="table table-bordered table-hover text-center align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th></th>
+            @for (dia of planesDiarios; track dia.day) {
+              <th>{{ dia.day }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="table-warning">Comida</th>
+            @for (dia of planesDiarios; track dia.day) {
+              <td>
+                @if (dia.lunchMealId) { <span class="badge bg-success mb-1">✓</span><br> }
+                <button class="btn btn-sm btn-outline-primary" (click)="agregarReceta('comida', dia.day)">+</button>
+              </td>
+            }
+          </tr>
+          <tr>
+            <th class="table-info">Cena</th>
+            @for (dia of planesDiarios; track dia.day) {
+              <td>
+                @if (dia.dinnerMealId) { <span class="badge bg-success mb-1">✓</span><br> }
+                <button class="btn btn-sm btn-outline-primary" (click)="agregarReceta('cena', dia.day)">+</button>
+              </td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    @if (sinRecetas) {
+      <div class="alert alert-danger">No has añadido ninguna receta.</div>
+    }
+    @if (existePlanSemanal) {
+      <div class="alert alert-danger">Ya existe un plan para esa semana.</div>
+    }
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-success" (click)="crearPlanSemanal()">Guardar plan</button>
+      <button class="btn btn-outline-secondary" (click)="limpiarPlan()">Cancelar</button>
+    </div>
+  }
 </div>

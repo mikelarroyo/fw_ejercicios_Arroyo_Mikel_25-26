@@ -38,7 +38,7 @@ export class DetailsMeal implements OnInit {
       const session = this.auth.getCurrentUser();
       if (!session) return;
 
-      const userMeals = this.localStorage.getUserMeals(session.id);
+      const userMeals = this.localStorage.getUserMeals(session.userId);
       const guardada = userMeals.some(m => m.mealId === id);
       this.isSaved.set(guardada);
 
@@ -54,7 +54,7 @@ export class DetailsMeal implements OnInit {
     if (!meal || !session) return;
 
     if (this.isSaved()) {
-      this.localStorage.removeMiniMeal(session.id, meal.idMeal);
+      this.localStorage.removeMiniMeal(session.userId, meal.idMeal);
       this.isSaved.set(false);
     } else {
       const userMiniMeal = {
@@ -62,7 +62,7 @@ export class DetailsMeal implements OnInit {
         strMeal: meal.strMeal,
         strMealThumb: meal.strMealThumb
       };
-      this.localStorage.saveMiniMeal(session.id, userMiniMeal);
+      this.localStorage.saveMiniMeal(session.userId, userMiniMeal);
       this.isSaved.set(true);
     }
   }

@@ -69,7 +69,7 @@ export class MealsCategory implements OnInit {
     try{
       const usuario = this.auth.getCurrentUser();
       if(usuario){
-        const categoria = this.localStorage.getFavoriteCategory(usuario.id);
+        const categoria = this.localStorage.getFavoriteCategory(usuario.userId);
         if (categoria){
           await this.onCategoryChange(categoria);
         } else {
@@ -87,7 +87,7 @@ export class MealsCategory implements OnInit {
       const usuario = this.auth.getCurrentUser();
       if(usuario){
         const categoria = this.selectedCategory();
-        this.localStorage.saveFavoriteCategory(usuario.id, categoria);
+        this.localStorage.saveFavoriteCategory(usuario.userId, categoria);
         alert(`Categoría favorita guardada: ${categoria}`);
       }
     } catch(error){

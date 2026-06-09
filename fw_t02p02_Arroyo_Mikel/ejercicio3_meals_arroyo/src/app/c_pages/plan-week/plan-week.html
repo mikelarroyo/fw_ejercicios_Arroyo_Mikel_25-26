@@ -1,5 +1,7 @@
-<div class="container mt-5">
-  <app-plan-week-create></app-plan-week-create>
-  <hr class="my-5">
-  <app-plan-week-list></app-plan-week-list>
-</div>
+@if (userId){
+
+<app-plan-week-create [userId]="userId"></app-plan-week-create>
+<app-plan-week-list [userId]="userId"></app-plan-week-list>
+}
+
+

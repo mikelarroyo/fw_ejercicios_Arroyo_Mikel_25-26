@@ -19,7 +19,7 @@ export class MealsSave {
   ngOnInit(): void {
     const session = this.auth.getCurrentUser();
     if (session) {
-      const userMiniMeals = this.localStorage.getUserMiniMeals(session.id);
+      const userMiniMeals = this.localStorage.getUserMiniMeals(session.userId);
       const lastFour = userMiniMeals.slice(-4).reverse();
       this.meals.set(lastFour);
     }
