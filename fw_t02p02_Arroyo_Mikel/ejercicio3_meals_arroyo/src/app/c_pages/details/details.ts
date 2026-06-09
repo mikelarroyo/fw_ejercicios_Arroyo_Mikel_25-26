@@ -1,11 +1,10 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DetailsMeal } from '../details-meal/details-meal';
-import { DetailsSave } from '../details-save/details-save';
 
 @Component({
   selector: 'app-details',
-  imports: [DetailsMeal, DetailsSave],
+  imports: [DetailsMeal],
   templateUrl: './details.html',
   styleUrl: './details.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

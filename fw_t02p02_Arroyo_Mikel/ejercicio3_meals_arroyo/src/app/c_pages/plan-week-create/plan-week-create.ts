@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { ApiService } from '../../services/api-service';
 import { LocalStorageService } from '../../services/local-storage-service';
@@ -17,6 +17,7 @@ import { Util } from '../../model/util';
 })
 export class PlanWeekCreate {
   userId = input.required<number>();
+  @Output() planGuardado = new EventEmitter<void>();
   private api = inject(ApiService);
   private localStorage = inject(LocalStorageService)
 
@@ -99,6 +100,7 @@ export class PlanWeekCreate {
       days: this.planesDiarios
     };
     this.localStorage.guardarPlanSemanal(nuevoPlan);
+    this.planGuardado.emit();
     this.limpiarPlan();
   }
 

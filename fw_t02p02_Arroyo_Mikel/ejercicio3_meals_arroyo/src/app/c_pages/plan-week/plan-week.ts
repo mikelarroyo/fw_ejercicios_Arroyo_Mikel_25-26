@@ -11,6 +11,10 @@ import { PlanWeekList } from '../plan-week-list/plan-week-list';
 })
 export class PlanWeek {
   private authservice = inject(AuthService);
-  public userId= this.authservice.getCurrentUserId();
+  public userId = this.authservice.getCurrentUserId();
+  public recargar = 0;
 
+  onPlanGuardado(): void {
+    this.recargar++;
+  }
 }

@@ -3,6 +3,7 @@ import { IUser } from '../model/i-user';
 import { AuthSession } from '../model/auth-session';
 import { IWeeklyPlan } from '../model/i-weekly-plan';
 import { IUserMiniMeal } from '../model/i-user-mini-meal';
+import { IUserRecipe } from '../model/i-user-recipe';
 @Injectable({
   providedIn: 'root',
 })
@@ -12,6 +13,7 @@ export class LocalStorageService {
   private readonly KEY_USER_MEALS = 'userMeals_';
   private readonly KEY_MINI_MEALS = 'userMiniMeals_';
   private readonly KEY_WEEKLY_PLANS = 'weeklyPlans';
+  private readonly KEY_MIS_RECETAS = 'misRecetas';
 
   // --- Usuarios ---
 
@@ -269,5 +271,34 @@ export class LocalStorageService {
     const planes = (JSON.parse(planesLS) as IWeeklyPlan[]).filter(p => !(p.userId === userId && p.id === planId));
     localStorage.setItem(this.KEY_WEEKLY_PLANS, JSON.stringify(planes));
   }
+
+  public obtenerProximoIdMisRecetas(userId: number): number {
+    const recetas = this.obtenerMiReceta(userId);
+    if (recetas.length === 0) return 1;
+    return Math.max(...recetas.map(r => r.id)) + 1;
+  }
+
+
+  public obtenerMiReceta(userId: number): IUserRecipe[] {
+    const recetasLS = localStorage.getItem(this.KEY_MIS_RECETAS);
+    if (!recetasLS) return [];
+    return (JSON.parse(recetasLS) as IUserRecipe[]).filter(p => p.userId === userId);
+  }
+
+  public eliminarMiReceta(userId: number, recetaId: number) {
+    const recetasLS = localStorage.getItem(this.KEY_MIS_RECETAS);
+    if (!recetasLS) return;
+    const recetas = (JSON.parse(recetasLS) as IUserRecipe[]).filter(p => !(p.userId === userId && p.id === recetaId));
+    localStorage.setItem(this.KEY_MIS_RECETAS, JSON.stringify(recetas));
+  }
+
+  public guardarMiReceta(receta: IUserRecipe) {
+    const recetasLS = localStorage.getItem(this.KEY_MIS_RECETAS);
+    const recetas: IUserRecipe[] = recetasLS ? JSON.parse(recetasLS) : [];
+    recetas.push(receta);
+    localStorage.setItem(this.KEY_MIS_RECETAS, JSON.stringify(recetas));
+
+  }
+
 
 }

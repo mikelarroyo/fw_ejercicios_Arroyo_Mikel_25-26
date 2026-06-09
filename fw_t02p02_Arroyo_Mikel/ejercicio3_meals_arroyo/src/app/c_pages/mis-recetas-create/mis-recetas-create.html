@@ -1,0 +1,86 @@
+<div class="container mt-3">
+  <h2 class="mb-3">Crear tu propia Receta</h2>
+
+  <form [formGroup]="recetaForm" class="mb-4">
+    <div class="mb-2">
+      <label>Nombre de la receta</label>
+      <input type="text" formControlName="nombre" class="form-control" placeholder="Nombre de la receta">
+      @if (recetaForm.get('nombre')?.invalid && recetaForm.get('nombre')?.touched) {
+        <div class="text-danger">El nombre es obligatorio</div>
+      }
+      @if (nombreDuplicado) {
+        <div class="text-danger">Ya tienes una receta con ese nombre</div>
+      }
+    </div>
+    <div class="mb-2">
+      <label>Categoria</label>
+      <select formControlName="categoria" class="form-select" title="Categoria">
+        @for (cat of categorias; track cat) {
+          <option [value]="cat">{{cat}}</option>
+        }
+      </select>
+      @if (recetaForm.get('categoria')?.invalid && recetaForm.get('categoria')?.touched) {
+        <div class="text-danger">La categoría es obligatoria</div>
+      }
+    </div>
+    <div class="mb-2">
+      <label>Pais</label>
+      <select formControlName="pais" class="form-select" title="Pais">
+        @for (pais of paises; track pais) {
+          <option [value]="pais">{{pais}}</option>
+        }
+      </select>
+      @if (recetaForm.get('pais')?.invalid && recetaForm.get('pais')?.touched) {
+        <div class="text-danger">El país es obligatorio</div>
+      }
+    </div>
+    <div class="mb-2">
+      <label>Instrucciones</label>
+      <textarea formControlName="instrucciones" class="form-control" placeholder="Instrucciones"></textarea>
+      @if (recetaForm.get('instrucciones')?.invalid && recetaForm.get('instrucciones')?.touched) {
+        <div class="text-danger">Las instrucciones son obligatorias</div>
+      }
+    </div>
+  </form>
+
+  <form [formGroup]="ingredienteForm" class="mb-2">
+    <label>Añadir ingrediente</label>
+    <div class="d-flex gap-2">
+      <select formControlName="listaIngredientes" class="form-select" title="Ingrediente">
+        @for (ingrediente of todosIngredientes; track ingrediente) {
+          <option [value]="ingrediente">{{ingrediente}}</option>
+        }
+      </select>
+      <input type="text" formControlName="cantidad" class="form-control" placeholder="Cantidad">
+      <button type="button" class="btn btn-secondary" (click)="anadirIngrediente()">Añadir</button>
+    </div>
+  </form>
+  @for (ing of ingredientes; track ing.name) {
+    <span class="badge bg-primary me-1">{{ing.name}} - {{ing.measure}}</span>
+  }
+
+  <form [formGroup]="imagenForm" class="mt-3 mb-2">
+    <label>Añadir imagen (URL)</label>
+    <div class="d-flex gap-2">
+      <input type="text" formControlName="url" class="form-control" placeholder="URL de la imagen">
+      <button type="button" class="btn btn-secondary" (click)="anadirImagen()">Añadir</button>
+    </div>
+    @if (imagenForm.get('url')?.invalid && imagenForm.get('url')?.touched) {
+      <div class="text-danger">Introduce una URL válida (debe empezar por http:// o https://)</div>
+    }
+    @if (urlDuplicada) {
+      <div class="text-danger">Esa URL ya está añadida</div>
+    }
+    @if (imagenForm.get('url')?.value) {
+      <img [src]="imagenForm.get('url')?.value" class="mt-2 img-preview" alt="Preview">
+    }
+  </form>
+  @for (img of imagenes; track img) {
+    <img [src]="img" class="me-2 mt-1 img-thumbnail-small" alt="Imagen añadida">
+  }
+
+  <div class="mt-3">
+    <button type="button" class="btn btn-success" (click)="onSubmit()">Guardar Receta</button>
+  </div>
+
+</div>

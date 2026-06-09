@@ -146,4 +146,28 @@ async searchMealsByIngredient(ingredient: string): Promise<IMyMeal[]> {
   }
 }
 
+async getAllAreas(): Promise<string[]> {
+  try {
+    const response = await fetch(`${this.API_URL}list.php?a=list`);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    const data: any = await response.json();
+    return data.meals.map((a: any) => a.strArea).sort();
+  } catch (error) {
+    console.error('Error obteniendo áreas:', error);
+    return [];
+  }
+}
+
+async getAllIngredients(): Promise<string[]> {
+  try {
+    const response = await fetch(`${this.API_URL}list.php?i=list`);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    const data: any = await response.json();
+    return data.meals.map((i: any) => i.strIngredient).sort();
+  } catch (error) {
+    console.error('Error obteniendo ingredientes:', error);
+    return [];
+  }
+}
+
 }
