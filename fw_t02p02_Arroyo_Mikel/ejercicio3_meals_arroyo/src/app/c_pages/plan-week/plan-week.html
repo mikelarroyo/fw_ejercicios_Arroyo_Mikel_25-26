@@ -1,5 +1,6 @@
-<div class="container mt-5">
-  <app-plan-week-create></app-plan-week-create>
-  <hr class="my-5">
-  <app-plan-week-list></app-plan-week-list>
-</div>
+@if (userId){
+  <app-plan-week-create [userId]="userId" (planGuardado)="onPlanGuardado()"></app-plan-week-create>
+  <app-plan-week-list [userId]="userId" [recargar]="recargar"></app-plan-week-list>
+}
+
+

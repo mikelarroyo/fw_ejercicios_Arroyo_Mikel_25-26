@@ -1,7 +1,7 @@
-import { IWeeklyPlanDay } from "./i-weekly-plan-day"
-
+import { IWeeklyPlanDay } from './i-weekly-plan-day';
 export interface IWeeklyPlan {
-  id: string
-  userId: number
+  id:string
+  userId: number;
   days: IWeeklyPlanDay[];
+
 }

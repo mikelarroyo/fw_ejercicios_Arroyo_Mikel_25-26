@@ -1,147 +1,120 @@
 import { Injectable } from '@angular/core';
 import { IUser } from '../model/i-user';
 import { AuthSession } from '../model/auth-session';
-import { AuthService } from './auth-service';
-
+import { IWeeklyPlan } from '../model/i-weekly-plan';
+import { IUserRecipe } from '../model/i-user-recipe';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalStorageService {
-  private static readonly KEY_USERS= 'users';
-  private static readonly KEY_SESSION = 'session';
+  private readonly KEY_USERS = 'users';
+  private readonly KEY_SESSION = 'session';
+  private readonly KEY_USER_MEALS = 'userMeals_';
+  private readonly KEY_MINI_MEALS = 'userMiniMeals_';
+  private readonly KEY_WEEKLY_PLANS = 'weeklyPlans';
+  private readonly KEY_MIS_RECETAS = 'misRecetas';
 
-  public guardarUsuario( usuario : IUser): void {
-    try{
-      const usuarios = this.obtenerTodosUsuarios();
-      usuarios.push(usuario);
-      localStorage.setItem(LocalStorageService.KEY_USERS, JSON.stringify(usuarios));
-    } catch (error){
-      console.error('Error guardando usuario en localStorage:', error);
-    }
+  private getFromStorage<T>(key: string): T[] {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) as T[] : [];
   }
+
+  private setToStorage<T>(key: string, value: T): void {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  // --- Usuarios ---
+
+  public guardarUsuario(usuario: IUser): void {
+    const usuarios = this.obtenerTodosUsuarios();
+    usuarios.push(usuario);
+    this.setToStorage(this.KEY_USERS, usuarios);
+  }
+
   public obtenerTodosUsuarios(): IUser[] {
-    try{
-      const jsonData = localStorage.getItem(LocalStorageService.KEY_USERS);
-      return jsonData ? JSON.parse(jsonData) : [];
-    } catch (error){
-      console.error('Error obteniendo los usuarios de LocalStorage:', error);
-      return [];
-    }
+    return this.getFromStorage<IUser>(this.KEY_USERS);
   }
+
   public buscarUsuarioPorEmail(email: string): IUser | null {
-    try{
-      const usuarios = this.obtenerTodosUsuarios();
-      const usuarioFiltrado= usuarios.find(u => u.email === email);
-      return usuarioFiltrado? usuarioFiltrado : null
-      } catch(error){
-      console.error('Error al obtener email del usuario:', error);
-      return null;
+    return this.obtenerTodosUsuarios().find(u => u.email === email) ?? null;
+  }
+
+  public actualizarUsuario(usuario: IUser): void {
+    const usuarios = this.obtenerTodosUsuarios();
+    const idx = usuarios.findIndex(u => u.email === usuario.email);
+    if (idx !== -1) {
+      usuarios[idx] = usuario;
+      this.setToStorage(this.KEY_USERS, usuarios);
     }
   }
 
   public buscarUsuarioPorId(id: number): IUser | null {
-    try{
-      const usuarios = this.obtenerTodosUsuarios();
-      const usuarioFiltrado= usuarios.find(u=> u.id === id);
-      return usuarioFiltrado || null;
-    } catch(error){
-      console.error('Error al buscar Usuario por id:', id);
-      return null;
-    }
-
+    return this.obtenerTodosUsuarios().find(u => u.id === id) ?? null;
   }
 
   public obtenerProximoIdUser(): number {
-  try {
     const usuarios = this.obtenerTodosUsuarios();
-    if (usuarios.length === 0) {
-      return 1;
+    if (usuarios.length === 0) return 1;
+    return Math.max(...usuarios.map(u => u.id)) + 1;
+  }
+
+  // --- metodos de la Sesión ---
+
+  public setUsuarioActual(session: AuthSession): void {
+    this.setToStorage(this.KEY_SESSION, session);
+  }
+
+  public getUserIdFromSession(): number | null {
+    return this.getUsuarioActual()?.userId ?? null;
+  }
+
+  public getUsuarioActual(): AuthSession | null {
+    const jsonData = localStorage.getItem(this.KEY_SESSION);
+    if (!jsonData) return null;
+    const session = JSON.parse(jsonData) as AuthSession;
+    if (!session.userId) {
+      const usuarios = this.obtenerTodosUsuarios();
+      const broken = usuarios.find(u => u.name === session.name);
+      if (!broken?.id) {
+        const newId = usuarios.length > 0
+          ? Math.max(...usuarios.map(u => Number(u.id) || 0)) + 1
+          : 1;
+        if (broken) { broken.id = newId; this.setToStorage(this.KEY_USERS, usuarios); }
+        session.userId = newId;
+      } else {
+        session.userId = broken.id;
+      }
+      this.setToStorage(this.KEY_SESSION, session);
     }
-    const maxId = Math.max(...usuarios.map(u => u.id));
-    return maxId + 1;
-  } catch (error) {
-    console.error('Error obteniendo próximo id:', error);
-    return 1;
+    return session;
   }
-}
 
-
-public setUsuarioActual(session : AuthSession):void{
-  try {
-    const JsonData= JSON.stringify(session);
-    localStorage.setItem(LocalStorageService.KEY_SESSION, JsonData);
-  }catch(error){
-    console.error('Error al guardar sesion', error);
+  public removeUsuarioActual(): void {
+    localStorage.removeItem(this.KEY_SESSION);
   }
-}
 
-public getUsuarioActual(): AuthSession | null {
-  try{
-    const jsonData = localStorage.getItem(LocalStorageService.KEY_SESSION);
-    if (jsonData) {
-      const data = JSON.parse(jsonData);
-      return new AuthSession(data.userId, data.name, new Date(data.loginDate));
-    }
-    return null;
-
-  } catch (error){
-    console.error('No ha sido posible obtener el Usuario actual', error);
-    return null;
-  }
-}
-
-public removeUsuarioActual(): void {
-  try {
-    localStorage.removeItem(LocalStorageService.KEY_SESSION);
-  } catch (error) {
-    console.error('Error eliminando sesión:', error);
-  }
-}
-
-public saveFavoriteCategory(userId: number, category: string): void {
-  try {
+  public saveFavoriteCategory(userId: number, category: string): void {
     const usuarios = this.obtenerTodosUsuarios();
     const usuario = usuarios.find(u => u.id === userId);
     if (usuario) {
       usuario.favoriteCategory = category;
-      localStorage.setItem(LocalStorageService.KEY_USERS, JSON.stringify(usuarios));
+      this.setToStorage(this.KEY_USERS, usuarios);
     }
-  } catch (error) {
-    console.error('Error guardando la categoría favorita', error);
   }
-}
 
-public getFavoriteCategory(userId: number): string | null {
-  try {
-    const usuario = this.buscarUsuarioPorId(userId);
-    return usuario?.favoriteCategory || null;
-  } catch (error) {
-    console.error('Error al obtener la categoría favorita', error);
-    return null;
+  public getFavoriteCategory(userId: number): string | null {
+    return this.buscarUsuarioPorId(userId)?.favoriteCategory ?? null;
   }
-}
-public getUserMeals(userId: number): any[] {
 
-  try{
-    const key = `userMeals_${userId}`;
-    const jsonData = localStorage.getItem(key);
-    return jsonData? JSON.parse(jsonData) : [];
+  // --- Comidas del usuario grandes---
 
-  }catch(error){
-    console.error('Error al obtener comidas guardadas')
-    return[];
+  public getUserMeals(userId: number): any[] {
+    return this.getFromStorage(`${this.KEY_USER_MEALS}${userId}`);
   }
-}
 
-public isMealSaved(userId: number, mealId: number): boolean {
-  const recetaUsuario = this.getUserMeals(userId);
-  return recetaUsuario.some(m => m.mealId === mealId);
-}
-
-public saveMeal(userId: number, meal: any): void {
-  try {
-    const key = `userMeals_${userId}`;
+  public saveMeal(userId: number, meal: any): void {
+    const key = `${this.KEY_USER_MEALS}${userId}`;
     const meals = this.getUserMeals(userId);
     const index = meals.findIndex(m => m.mealId === meal.mealId);
     if (index !== -1) {
@@ -149,26 +122,23 @@ public saveMeal(userId: number, meal: any): void {
     } else {
       meals.push(meal);
     }
-    localStorage.setItem(key, JSON.stringify(meals));
-  } catch (error) {
-    console.error('Error guardando comida:', error);
+    this.setToStorage(key, meals);
   }
-}
 
-public removeMeal(userId: number, mealId: number): void {
-  try {
-    const key = `userMeals_${userId}`;
-    const meals = this.getUserMeals(userId);
-    const filtered = meals.filter(m => m.mealId !== mealId);
-    localStorage.setItem(key, JSON.stringify(filtered));
-  } catch (error) {
-    console.error('Error eliminando comida:', error);
+  public removeMeal(userId: number, mealId: number): void {
+    const key = `${this.KEY_USER_MEALS}${userId}`;
+    const filtered = this.getUserMeals(userId).filter(m => m.mealId !== mealId);
+    this.setToStorage(key, filtered);
   }
-}
 
-public saveMiniMeal(userId: number, miniMeal: any): void {
-  try {
-    const key = `userMiniMeals_${userId}`;
+  // --- Mini comidas details guardadas---
+
+  public getUserMiniMeals(userId: number): any[] {
+    return this.getFromStorage(`${this.KEY_MINI_MEALS}${userId}`);
+  }
+
+  public saveMiniMeal(userId: number, miniMeal: any): void {
+    const key = `${this.KEY_MINI_MEALS}${userId}`;
     const miniMeals = this.getUserMiniMeals(userId);
     const index = miniMeals.findIndex(m => m.mealId === miniMeal.mealId);
     if (index !== -1) {
@@ -176,81 +146,54 @@ public saveMiniMeal(userId: number, miniMeal: any): void {
     } else {
       miniMeals.push(miniMeal);
     }
-    localStorage.setItem(key, JSON.stringify(miniMeals));
-    console.log('✅ saveMiniMeal guardado:', miniMeal, 'en key:', key);
-  } catch (error) {
-    console.error('Error guardando miniMeal:', error);
+    this.setToStorage(key, miniMeals);
   }
-}
 
-public getUserMiniMeals(userId: number): any[] {
-  try {
-    const key = `userMiniMeals_${userId}`;
-    const jsonData = localStorage.getItem(key);
-    return jsonData ? JSON.parse(jsonData) : [];
-  } catch (error) {
-    console.error('Error obteniendo miniMeals guardadas');
-    return [];
+  public removeMiniMeal(userId: number, mealId: number): void {
+    const key = `${this.KEY_MINI_MEALS}${userId}`;
+    const filtered = this.getUserMiniMeals(userId).filter(m => m.mealId !== mealId);
+    this.setToStorage(key, filtered);
   }
-}
 
-public removeMiniMeal(userId: number, mealId: number): void {
-  try {
-    const key = `userMiniMeals_${userId}`;
-    const miniMeals = this.getUserMiniMeals(userId);
-    const filtered = miniMeals.filter(m => m.mealId !== mealId);
-    localStorage.setItem(key, JSON.stringify(filtered));
-  } catch (error) {
-    console.error('Error eliminando miniMeal:', error);
-  }
-}
-public getWeeklyPlan(userId: number, weekId: string): any {
-  try {
-    const key = `weeklyPlan_${userId}_${weekId}`;
-    const jsonData = localStorage.getItem(key);
-    return jsonData ? JSON.parse(jsonData) : null;
-  } catch (error) {
-    console.error('Error obteniendo plan semanal:', error);
-    return null;
-  }
-}
+  // --- Planes semanales ---
 
-public saveWeeklyPlan(userId: number, plan: any): void {
-  try {
-    const key = `weeklyPlan_${userId}_${plan.id}`;
-    localStorage.setItem(key, JSON.stringify(plan));
-  } catch (error) {
-    console.error('Error guardando plan semanal:', error);
+  public obtenerPlanesSemanalUsuario(userId: number): IWeeklyPlan[] {
+    return this.getFromStorage<IWeeklyPlan>(this.KEY_WEEKLY_PLANS).filter(p => p.userId === userId);
   }
-}
 
-public deleteWeeklyPlan(userId: number, weekId: string): void {
-  try {
-    const key = `weeklyPlan_${userId}_${weekId}`;
-    localStorage.removeItem(key);
-  } catch (error) {
-    console.error('Error eliminando plan semanal:', error);
+  public guardarPlanSemanal(plan: IWeeklyPlan): void {
+    const planes = this.getFromStorage<IWeeklyPlan>(this.KEY_WEEKLY_PLANS);
+    planes.push(plan);
+    this.setToStorage(this.KEY_WEEKLY_PLANS, planes);
   }
-}
 
-public getAllWeeklyPlans(userId: number): any[] {
-  try {
-    const plans: any[] = [];
-    const prefix = `weeklyPlan_${userId}_`;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith(prefix)) {
-        const jsonData = localStorage.getItem(key);
-        if (jsonData) {
-          plans.push(JSON.parse(jsonData));
-        }
-      }
-    }
-    return plans;
-  } catch (error) {
-    console.error('Error obteniendo todos los planes semanales:', error);
-    return [];
+  public eliminarPlanSemanal(userId: number, planId: string): void {
+    const planes = this.getFromStorage<IWeeklyPlan>(this.KEY_WEEKLY_PLANS)
+      .filter(p => !(p.userId === userId && p.id === planId));
+    this.setToStorage(this.KEY_WEEKLY_PLANS, planes);
   }
-}
 
+  // --- Mis recetas ---
+
+  public obtenerProximoIdMisRecetas(userId: number): number {
+    const recetas = this.obtenerMiReceta(userId);
+    if (recetas.length === 0) return 1;
+    return Math.max(...recetas.map(r => r.id)) + 1;
+  }
+
+  public obtenerMiReceta(userId: number): IUserRecipe[] {
+    return this.getFromStorage<IUserRecipe>(this.KEY_MIS_RECETAS).filter(p => p.userId === userId);
+  }
+
+  public eliminarMiReceta(userId: number, recetaId: number): void {
+    const recetas = this.getFromStorage<IUserRecipe>(this.KEY_MIS_RECETAS)
+      .filter(p => !(p.userId === userId && p.id === recetaId));
+    this.setToStorage(this.KEY_MIS_RECETAS, recetas);
+  }
+
+  public guardarMiReceta(receta: IUserRecipe): void {
+    const recetas = this.getFromStorage<IUserRecipe>(this.KEY_MIS_RECETAS);
+    recetas.push(receta);
+    this.setToStorage(this.KEY_MIS_RECETAS, recetas);
+  }
 }

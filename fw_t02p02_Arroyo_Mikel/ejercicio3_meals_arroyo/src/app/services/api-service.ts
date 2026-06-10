@@ -9,7 +9,6 @@ import { MealsCategory } from '../c_pages/meals-category/meals-category';
 })
 export class ApiService {
   private readonly API_URL = 'https://www.themealdb.com/api/json/v1/1/';
-  private readonly API_KEY = '1';
 
   constructor(){}
 
@@ -31,7 +30,7 @@ export class ApiService {
 
 private convertJsonToInterface(mealApi: any): IMyMeal {
   return {
-    idMeal: mealApi.idMeal,
+    idMeal: Number(mealApi.idMeal),
     strMeal: mealApi.strMeal,
     strCategory: mealApi.strCategory,
     strArea: mealApi.strArea,
@@ -142,6 +141,30 @@ async searchMealsByIngredient(ingredient: string): Promise<IMyMeal[]> {
     return data.meals.map((meal: any) => this.convertJsonToInterface(meal));
   } catch (error) {
     console.error('Error buscando recetas por ingrediente:', error);
+    return [];
+  }
+}
+
+async getAllAreas(): Promise<string[]> {
+  try {
+    const response = await fetch(`${this.API_URL}list.php?a=list`);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    const data: any = await response.json();
+    return data.meals.map((a: any) => a.strArea).sort();
+  } catch (error) {
+    console.error('Error obteniendo áreas:', error);
+    return [];
+  }
+}
+
+async getAllIngredients(): Promise<string[]> {
+  try {
+    const response = await fetch(`${this.API_URL}list.php?i=list`);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    const data: any = await response.json();
+    return data.meals.map((i: any) => i.strIngredient).sort();
+  } catch (error) {
+    console.error('Error obteniendo ingredientes:', error);
     return [];
   }
 }

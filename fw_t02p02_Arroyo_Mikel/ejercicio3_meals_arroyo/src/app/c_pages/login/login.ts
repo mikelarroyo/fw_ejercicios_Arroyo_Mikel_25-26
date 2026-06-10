@@ -26,7 +26,7 @@ export class Login {
   }, { validators: this.passwordMatchValidator });
 
   constructor(
-    private auth: AuthService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -43,7 +43,7 @@ export class Login {
     }
 
     const { email, password } = this.loginForm.value;
-    const success = this.auth.login(email ?? '', password ?? '');
+    const success = this.authService.login(email ?? '', password ?? '');
 
     if (success) {
       this.errorMessage = '';
@@ -59,7 +59,7 @@ export class Login {
   }
 
   const { name, email, password } = this.registerForm.value;
-  const success = this.auth.register(name ?? '', email ?? '', password ?? '');
+  const success = this.authService.register(name ?? '', email ?? '', password ?? '');
 
   if (success) {
     this.errorMessage = '';

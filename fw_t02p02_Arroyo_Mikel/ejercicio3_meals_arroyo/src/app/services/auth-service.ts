@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { LocalStorageService } from './local-storage-service';
 import { AuthSession } from '../model/auth-session';
 import { IUser } from '../model/i-user';
@@ -7,32 +7,37 @@ import { IUser } from '../model/i-user';
   providedIn: 'root',
 })
 export class AuthService {
+  private storage = inject(LocalStorageService);
 
-
-  constructor(private storage: LocalStorageService) {}
+  public currentUser = signal<AuthSession | null>(this.storage.getUsuarioActual());
+  public sessionActive = computed(() => this.currentUser() !== null);
 
   public login(email: string, password: string): boolean {
-    try{
+    try {
       const usuario = this.storage.buscarUsuarioPorEmail(email);
-
-      if(usuario && usuario.password === password){
-        const session = new AuthSession(usuario.id, usuario.name, new Date());
+      if (usuario && usuario.password === password) {
+        if (!usuario.id) {
+          usuario.id = this.storage.obtenerProximoIdUser();
+          this.storage.actualizarUsuario(usuario);
+        }
+        const session: AuthSession = { userId: usuario.id, name: usuario.name, loginDate: new Date() };
         this.storage.setUsuarioActual(session);
+        this.currentUser.set(session);
         return true;
       }
-    return false;
-
-    } catch(error){
+      return false;
+    } catch (error) {
       console.error('Error en login', error);
       return false;
     }
   }
 
-  public logout(): void{
-    try{
+  public logout(): void {
+    try {
       this.storage.removeUsuarioActual();
-    }catch(error){
-      console.error('Error en logout', error)
+      this.currentUser.set(null);
+    } catch (error) {
+      console.error('Error en logout', error);
     }
   }
 
@@ -41,37 +46,36 @@ export class AuthService {
   }
 
   public getCurrentUser(): AuthSession | null {
-    try{
+    try {
       return this.storage.getUsuarioActual();
-    }catch(error){
+    } catch (error) {
       console.error('No se ha podido conseguir informacion del usuario actual', error);
       return null;
     }
-
   }
-  public register(name: string, email:string, password: string): boolean{
-    try{
-      if(this.storage.buscarUsuarioPorEmail(email)){
+
+  public getCurrentUserId(): number | null {
+    return this.storage.getUserIdFromSession();
+  }
+
+  public register(name: string, email: string, password: string): boolean {
+    try {
+      if (this.storage.buscarUsuarioPorEmail(email)) {
         return false;
       }
-      const nextId= this.storage.obtenerProximoIdUser();
-      const usuarioNuevo= {
+      const nextId = this.storage.obtenerProximoIdUser();
+      const usuarioNuevo: IUser = {
         id: nextId,
-        name: name,
-        email: email,
-        password: password,
+        name,
+        email,
+        password,
         favoriteCategory: undefined
-      }
+      };
       this.storage.guardarUsuario(usuarioNuevo);
       return true;
-
-
-    }catch(error){
+    } catch (error) {
       console.error('No se ha podido registar al usuario', error);
       return false;
     }
-
   }
-
-
 }

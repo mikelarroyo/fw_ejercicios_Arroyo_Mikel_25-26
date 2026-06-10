@@ -1,0 +1,4 @@
+@if (userId){
+  <app-mis-recetas-list [userId]="userId" [recargar]="recargar"></app-mis-recetas-list>
+  <app-mis-recetas-create [userId]="userId" (recetaCreada)="onRecetaCreada()"></app-mis-recetas-create>
+}

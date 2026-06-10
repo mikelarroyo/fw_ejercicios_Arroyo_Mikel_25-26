@@ -1,0 +1,74 @@
+<div class="container mt-3">
+  <h2>Mis recetas creadas</h2>
+
+  @if (misRecetas.length === 0) {
+    <div class="mt-3">No tienes recetas creadas</div>
+  } @else {
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>nombre</th>
+          <th>categoria</th>
+          <th>pais</th>
+          <th>nº ingredientes</th>
+          <th>nº imagenes</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (receta of misRecetas; track receta.id) {
+          <tr>
+            <td>{{receta.id}}</td>
+            <td>{{receta.nombre}}</td>
+            <td>{{receta.categoria}}</td>
+            <td>{{receta.pais}}</td>
+            <td>{{receta.ingredientes_cantidades.length}}</td>
+            <td>{{receta.imagenes.length}}</td>
+            <td>
+              <button type="button" class="btn btn-info me-1" (click)="verDetalles(receta)">Detalles</button>
+              <button type="button" class="btn btn-danger" (click)="eliminarReceta(receta.id)">Eliminar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>
+
+@if (recetaSeleccionada) {
+  <div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{recetaSeleccionada.nombre}}</h5>
+          <button type="button" class="btn-close" title="Cerrar" (click)="cerrarModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Categoría:</strong> {{recetaSeleccionada.categoria}}</p>
+          <p><strong>País:</strong> {{recetaSeleccionada.pais}}</p>
+          <p><strong>Instrucciones:</strong> {{recetaSeleccionada.instrucciones}}</p>
+
+          <h6>Ingredientes</h6>
+          <ul>
+            @for (ing of recetaSeleccionada.ingredientes_cantidades; track ing.name) {
+              <li>{{ing.name}} — {{ing.measure}}</li>
+            }
+          </ul>
+
+          <h6>Imágenes</h6>
+          <div class="d-flex flex-wrap gap-2">
+            @for (img of recetaSeleccionada.imagenes; track img) {
+              <img [ngSrc]="img" class="img-thumbnail img-modal" alt="{{recetaSeleccionada.nombre}}" width="200" height="150">
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}
