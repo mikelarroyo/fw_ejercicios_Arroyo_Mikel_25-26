@@ -1,0 +1,3 @@
+[build]
+  command = "npm run build"
+  publish = "dist/ejercicio3_meals_arroyo/browser"

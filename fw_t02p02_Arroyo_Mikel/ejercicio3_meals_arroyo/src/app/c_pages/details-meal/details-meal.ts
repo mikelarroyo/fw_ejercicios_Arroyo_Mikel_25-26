@@ -1,4 +1,5 @@
-import { Component, input, signal, inject, effect } from '@angular/core';
+import { Component, Input, OnChanges, signal, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { ApiService } from '../../services/api-service';
 import { AuthService } from '../../services/auth-service';
 import { LocalStorageService } from '../../services/local-storage-service';
@@ -7,23 +8,21 @@ import { IMyMeal } from '../../model/i-my-meal';
 
 @Component({
   selector: 'app-details-meal',
-  imports: [DetailsSave],
+  imports: [DetailsSave, NgOptimizedImage],
   templateUrl: './details-meal.html',
   styleUrl: './details-meal.css',
 })
-export class DetailsMeal {
+export class DetailsMeal implements OnChanges {
   private api = inject(ApiService);
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private localStorage = inject(LocalStorageService);
 
-  id = input.required<number>();
+  @Input() id!: number;
   meal = signal<IMyMeal | null>(null);
   isSaved = signal(false);
 
-  constructor() {
-    effect(() => {
-      this.cargarReceta(this.id());
-    });
+  ngOnChanges(): void {
+    this.cargarReceta(this.id);
   }
 
   private async cargarReceta(id: number): Promise<void> {
@@ -31,11 +30,11 @@ export class DetailsMeal {
       const meal = await this.api.getMealById(id);
       this.meal.set(meal);
 
-      const session = this.auth.getCurrentUser();
+      const session = this.authService.getCurrentUser();
       if (!session) return;
 
       const userMeals = this.localStorage.getUserMiniMeals(session.userId);
-      const guardada = userMeals.some(m => String(m.mealId) === String(id));
+      const guardada = userMeals.some(m => m.mealId === id);
       this.isSaved.set(guardada);
 
     } catch (error) {
@@ -45,12 +44,13 @@ export class DetailsMeal {
 
   toggleSave(): void {
     const meal = this.meal();
-    const session = this.auth.getCurrentUser();
+    const session = this.authService.getCurrentUser();
 
     if (!meal || !session) return;
 
     if (this.isSaved()) {
       this.localStorage.removeMiniMeal(session.userId, meal.idMeal);
+      this.localStorage.removeMeal(session.userId, meal.idMeal);
       this.isSaved.set(false);
     } else {
       const userMiniMeal = {

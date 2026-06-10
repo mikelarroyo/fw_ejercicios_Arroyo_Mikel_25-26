@@ -1,4 +1,5 @@
-import { Component, inject, input, signal, Output, EventEmitter } from '@angular/core';
+import { Component, inject, Input, signal, Output, EventEmitter } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { FormControl, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { ApiService } from '../../services/api-service';
 import { LocalStorageService } from '../../services/local-storage-service';
@@ -11,12 +12,12 @@ import { Util } from '../../model/util';
 
 @Component({
   selector: 'app-plan-week-create',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './plan-week-create.html',
   styleUrl: './plan-week-create.css',
 })
 export class PlanWeekCreate {
-  userId = input.required<number>();
+  @Input() userId!: number;
   @Output() planGuardado = new EventEmitter<void>();
   private api = inject(ApiService);
   private localStorage = inject(LocalStorageService)
@@ -50,6 +51,11 @@ export class PlanWeekCreate {
   handleFechaSeleccionada() {
     if (this.fechaForm.invalid) return;
     const fecha = this.fechaForm.get('fecha')?.value;
+    this.planesDiarios = this.generarPlanesDiarios();
+    this.platosEncontrados.set(null);
+    this.platoSeleccionado.set(null);
+    this.sinRecetas = false;
+    this.existePlanSemanal = false;
     this.fechaSeleccionada.set(new Date(fecha!));
   }
 
@@ -88,7 +94,7 @@ export class PlanWeekCreate {
 
     // comprueba si ya existe un plan para esa semana
     const semana = Util.getISOWeek(this.fechaSeleccionada()!);
-    const planes = this.localStorage.obtenerPlanesSemanalUsuario(this.userId());
+    const planes = this.localStorage.obtenerPlanesSemanalUsuario(this.userId);
     if (planes.some(p => p.id === semana)) {
       this.existePlanSemanal = true;
       return;
@@ -96,7 +102,7 @@ export class PlanWeekCreate {
 
     const nuevoPlan: IWeeklyPlan = {
       id: semana,
-      userId: this.userId(),
+      userId: this.userId,
       days: this.planesDiarios
     };
     this.localStorage.guardarPlanSemanal(nuevoPlan);

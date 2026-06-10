@@ -9,7 +9,6 @@ import { MealsCategory } from '../c_pages/meals-category/meals-category';
 })
 export class ApiService {
   private readonly API_URL = 'https://www.themealdb.com/api/json/v1/1/';
-  private readonly API_KEY = '1';
 
   constructor(){}
 
@@ -31,7 +30,7 @@ export class ApiService {
 
 private convertJsonToInterface(mealApi: any): IMyMeal {
   return {
-    idMeal: mealApi.idMeal,
+    idMeal: Number(mealApi.idMeal),
     strMeal: mealApi.strMeal,
     strCategory: mealApi.strCategory,
     strArea: mealApi.strArea,

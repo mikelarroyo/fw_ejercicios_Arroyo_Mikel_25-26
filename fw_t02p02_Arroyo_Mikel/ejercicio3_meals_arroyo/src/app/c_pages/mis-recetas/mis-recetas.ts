@@ -10,8 +10,8 @@ import { AuthService } from '../../services/auth-service';
   styleUrl: './mis-recetas.css',
 })
 export class MisRecetas {
-  private authservice = inject(AuthService);
-  public userId = this.authservice.getCurrentUserId();
+  private authService = inject(AuthService);
+  public userId = this.authService.getCurrentUserId();
   public recargar = false;
 
 

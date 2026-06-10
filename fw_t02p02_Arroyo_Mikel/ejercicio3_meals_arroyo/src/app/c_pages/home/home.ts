@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth-service';
   styleUrl: './home.css',
 })
 export class Home {
-  protected auth = inject(AuthService);
+  private authService = inject(AuthService);
+  public userId = this.authService.getCurrentUserId();
 }
 

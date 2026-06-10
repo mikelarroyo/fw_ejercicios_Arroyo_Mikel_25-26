@@ -1,5 +1,6 @@
 import { Component, inject, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { NgClass, NgOptimizedImage } from '@angular/common';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { ApiService } from '../../services/api-service';
 import { IIngrMeasure } from '../../model/i-ingr-measure';
@@ -7,7 +8,7 @@ import { IUserRecipe } from '../../model/i-user-recipe';
 
 @Component({
   selector: 'app-mis-recetas-create',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass, NgOptimizedImage],
   templateUrl: './mis-recetas-create.html',
   styleUrl: './mis-recetas-create.css',
 })
@@ -47,6 +48,16 @@ export class MisRecetasCreate implements OnInit {
 
   urlDuplicada = false;
   nombreDuplicado = false;
+  sinIngredientes = false;
+  sinImagenes = false;
+  submitted = false;
+
+  getValidationClass(controlName: string): string {
+    if (!this.submitted) return '';
+    const control = this.recetaForm.get(controlName);
+    if (!control) return '';
+    return control.valid ? 'is-valid' : 'is-invalid';
+  }
 
   anadirIngrediente(){
     if(this.ingredienteForm.invalid) return;
@@ -69,9 +80,10 @@ export class MisRecetasCreate implements OnInit {
   }
 
   onSubmit(){
-    if(this.recetaForm.invalid) return;
-    if (this.ingredientes.length === 0) return;
-    if (this.imagenes.length === 0) return;
+    this.submitted = true;
+    this.sinIngredientes = this.ingredientes.length === 0;
+    this.sinImagenes = this.imagenes.length === 0;
+    if(this.recetaForm.invalid || this.sinIngredientes || this.sinImagenes) return;
     const nombre = this.recetaForm.get('nombre')?.value!;
     const recetasExistentes = this.localStorage.obtenerMiReceta(this.userId);
     if (recetasExistentes.some(r => r.nombre === nombre)) {
@@ -93,6 +105,9 @@ export class MisRecetasCreate implements OnInit {
     this.recetaCreada.emit();
     this.ingredientes = [];
     this.imagenes = [];
+    this.submitted = false;
+    this.sinIngredientes = false;
+    this.sinImagenes = false;
     this.recetaForm.reset();
   }
 

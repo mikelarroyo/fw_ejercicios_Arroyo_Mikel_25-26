@@ -5,10 +5,11 @@ import { AuthService } from '../../services/auth-service';
 import { IMyMeal } from '../../model/i-my-meal';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { RouterLink } from "@angular/router";
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-meals-category',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, NgOptimizedImage],
   templateUrl: './meals-category.html',
   styleUrl: './meals-category.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,9 +20,9 @@ export class MealsCategory implements OnInit {
   selectedCategory = signal<string>('Todas las categorías');
 
   private api = inject(ApiService);
-  protected auth = inject(AuthService);
+  private authService = inject(AuthService);
+  public userId = this.authService.getCurrentUserId();
   private localStorage = inject(LocalStorageService);
-
 
   ngOnInit(): void {
     this.loadCategories();
@@ -65,35 +66,25 @@ export class MealsCategory implements OnInit {
       }
     }
   }
+
   private async loadFavoriteCategory(): Promise<void> {
-    try{
-      const usuario = this.auth.getCurrentUser();
-      if(usuario){
-        const categoria = this.localStorage.getFavoriteCategory(usuario.userId);
-        if (categoria){
-          await this.onCategoryChange(categoria);
-        } else {
-          await this.load8RandomMeals();
-        }
+    if (this.userId) {
+      const categoria = this.localStorage.getFavoriteCategory(this.userId);
+      if (categoria) {
+        await this.onCategoryChange(categoria);
       } else {
         await this.load8RandomMeals();
       }
-    } catch(error){
-      console.error('Error al cargar categoría favorita', error);
-    }
-  }
-  public onSaveFavoriteCategory(): void{
-    try{
-      const usuario = this.auth.getCurrentUser();
-      if(usuario){
-        const categoria = this.selectedCategory();
-        this.localStorage.saveFavoriteCategory(usuario.userId, categoria);
-        alert(`Categoría favorita guardada: ${categoria}`);
-      }
-    } catch(error){
-      console.error('Error al guardar categoría favorita', error);
+    } else {
+      await this.load8RandomMeals();
     }
   }
 
-
+  public onSaveFavoriteCategory(): void {
+    if (this.userId) {
+      const categoria = this.selectedCategory();
+      this.localStorage.saveFavoriteCategory(this.userId, categoria);
+      alert(`Categoría favorita guardada: ${categoria}`);
+    }
+  }
 }

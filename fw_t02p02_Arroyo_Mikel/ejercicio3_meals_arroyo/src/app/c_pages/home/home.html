@@ -1,5 +1,9 @@
 <app-meals-category></app-meals-category>
 
-@if (auth.isAuthenticated()) {
-  <app-meals-save></app-meals-save>
+@if (userId) {
+  @defer (on viewport) {
+    <app-meals-save [userId]="userId"></app-meals-save>
+  } @placeholder {
+    <p>Cargando recetas guardadas...</p>
+  }
 }

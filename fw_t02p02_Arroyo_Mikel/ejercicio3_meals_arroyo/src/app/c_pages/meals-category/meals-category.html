@@ -5,12 +5,12 @@
       <label for="categorySelect" class="form-label fw-bold">Categoría</label>
       <select id="categorySelect" class="form-select" [(ngModel)]="selectedCategory" (change)="onCategoryChangeEvent($event)">
         <option value="Todas las categorías">Todas las categorías</option>
-        @for (cat of categories(); track $index) {
+        @for (cat of categories(); track cat) {
           <option [value]="cat">{{ cat }}</option>
         }
       </select>
     </div>
-    @if (auth.isAuthenticated()) {
+    @if (userId) {
       <div class="col-12 col-md-6 col-lg-3 d-flex align-items-end">
         <button type="button" class="btn btn-warning w-100" (click)="onSaveFavoriteCategory()">
           <i class="bi bi-star-fill"></i> Guardar favorita
@@ -24,14 +24,14 @@
     @for (meal of meals(); track meal.idMeal) {
       <div class="col-md-6 col-lg-3 mb-4">
         <div class="card h-100 shadow-sm">
-          <img [src]="meal.strMealThumb" class="card-img-top" [alt]="meal.strMeal" style="height: 200px; object-fit: cover;">
+          <img [ngSrc]="meal.strMealThumb" class="card-img-top" [alt]="meal.strMeal" width="400" height="200" style="object-fit: cover;">
           <div class="card-body">
             <h5 class="card-title">{{ meal.strMeal }}</h5>
             <p class="card-text small text-muted">
               <strong>{{ meal.strCategory }}</strong><br>
               {{ meal.strArea }}
             </p>
-            @if (auth.isAuthenticated()) {
+            @if (userId) {
               <a [routerLink]="['/details', meal.idMeal]" class="btn btn-primary btn-sm">Detalles</a>
             }
             @if (meal.ingredients && meal.ingredients.length > 0) {

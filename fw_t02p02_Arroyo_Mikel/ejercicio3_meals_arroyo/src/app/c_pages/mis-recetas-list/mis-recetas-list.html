@@ -60,7 +60,7 @@
           <h6>Imágenes</h6>
           <div class="d-flex flex-wrap gap-2">
             @for (img of recetaSeleccionada.imagenes; track img) {
-              <img [src]="img" class="img-thumbnail img-modal" alt="{{recetaSeleccionada.nombre}}">
+              <img [ngSrc]="img" class="img-thumbnail img-modal" alt="{{recetaSeleccionada.nombre}}" width="200" height="150">
             }
           </div>
         </div>

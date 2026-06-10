@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { LocalStorageService } from './local-storage-service';
 import { AuthSession } from '../model/auth-session';
 import { IUser } from '../model/i-user';
@@ -10,6 +10,7 @@ export class AuthService {
   private storage = inject(LocalStorageService);
 
   public currentUser = signal<AuthSession | null>(this.storage.getUsuarioActual());
+  public sessionActive = computed(() => this.currentUser() !== null);
 
   public login(email: string, password: string): boolean {
     try {

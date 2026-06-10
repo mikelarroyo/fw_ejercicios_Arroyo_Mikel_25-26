@@ -1,5 +1,5 @@
-import { Component, input, inject, OnInit, ChangeDetectionStrategy, signal, effect } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators} from '@angular/forms';
+import { Component, Input, OnChanges, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { AuthService } from '../../services/auth-service';
 import { ApiService } from '../../services/api-service';
@@ -13,14 +13,14 @@ import { IMyMeal } from '../../model/i-my-meal';
   styleUrl: './details-save.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DetailsSave implements OnInit{
+export class DetailsSave implements OnInit, OnChanges {
 
-  private localStorage= inject(LocalStorageService);
-  private auth = inject(AuthService);
+  private localStorage = inject(LocalStorageService);
+  private authService = inject(AuthService);
   private api = inject(ApiService);
   private location = inject(Location);
 
-  id= input.required<number>();
+  @Input() id!: number;
   meal = signal<IMyMeal | null>(null);
 
   form = new FormGroup({
@@ -30,29 +30,24 @@ export class DetailsSave implements OnInit{
     saveDate: new FormControl('')
   });
 
-  constructor() {
-    effect(() => {
-      this.id();
-      this.loadMeal();
-    });
-  }
-
   ngOnInit(): void {
-    this.loadMeal();
     this.form.get('status')?.valueChanges.subscribe((status) => {
       this.updateFieldsState(status);
     });
   }
 
+  ngOnChanges(): void {
+    this.loadMeal();
+  }
+
   private async loadMeal(): Promise<void> {
     try {
-      const id = this.id();
-      const session = this.auth.getCurrentUser()!;
-      const mealData = await this.api.getMealById(id);
+      const session = this.authService.getCurrentUser()!;
+      const mealData = await this.api.getMealById(this.id);
       this.meal.set(mealData);
 
       const userMeals = this.localStorage.getUserMeals(session.userId);
-      const savedMeal = userMeals.find(m => m.mealId === id);
+      const savedMeal = userMeals.find(m => m.mealId === this.id);
 
       if (savedMeal) {
         this.form.patchValue({
@@ -83,19 +78,15 @@ export class DetailsSave implements OnInit{
   }
 
   onSubmit(): void {
-    const id = this.id();
-    const session = this.auth.getCurrentUser()!;
+    const session = this.authService.getCurrentUser()!;
     const formValue = this.form.value;
     const mealData = this.meal();
 
-    if (!mealData) {
-      console.error('Receta no cargada');
-      return;
-    }
+    if (!mealData) return;
 
     const userMeal = {
       userId: session.userId,
-      mealId: id,
+      mealId: this.id,
       saveDate: formValue.saveDate || new Date().toISOString(),
       status: formValue.status,
       rating: formValue.rating,

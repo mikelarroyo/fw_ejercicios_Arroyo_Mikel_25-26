@@ -1,14 +1,15 @@
-import { Component,inject, Input, OnChanges, output, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { LocalStorageService } from '../../services/local-storage-service';
 import { IUserRecipe } from '../../model/i-user-recipe';
 
 @Component({
   selector: 'app-mis-recetas-list',
-  imports: [],
+  imports: [NgOptimizedImage],
   templateUrl: './mis-recetas-list.html',
   styleUrl: './mis-recetas-list.css',
 })
-export class MisRecetasList implements OnChanges {
+export class MisRecetasList implements OnInit, OnChanges {
   @Input() userId!: number;
   @Input() recargar: boolean = false;
   private localStorage = inject(LocalStorageService);

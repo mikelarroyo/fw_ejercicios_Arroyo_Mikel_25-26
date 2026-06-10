@@ -11,7 +11,7 @@ import { Util } from '../../model/util';
 })
 export class PlanWeekList implements OnChanges {
   @Input() userId!: number;
-  @Input() recargar: number = 0;
+  @Input() recargar: boolean = false;
   private localStorage = inject(LocalStorageService);
 
   planesSemanales: IWeeklyPlan[] = [];
