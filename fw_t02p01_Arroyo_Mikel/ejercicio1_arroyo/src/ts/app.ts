@@ -95,14 +95,14 @@ function cargarValidacionDeFormularios(): void {
 function crearUsuario(form: HTMLFormElement) {
     const storage: StorageService = new StorageService();
     const user: User = {
-        id: storage.obtenerProximoIdUser(),
+        id: storage.nextId(),
         name: form.usuario.value,
         email: form.correo.value,
         password: form.password.value,
     };
     form.classList.remove("was-validated");
     form.reset();
-    storage.guardarAgregarUsuario(user);
+    storage.registrarUsuario(user);
     cerrarModalLoginOut();
     // window.location.href = window.location.href;
     window.location.reload()
@@ -116,7 +116,7 @@ function cerrarModalLoginOut() {
 
 function iniciarSesion(form: HTMLFormElement) {
     const storage: StorageService = new StorageService();
-    const usuarioActual: User | null = storage.buscarUsuarioPorCorreo(
+    const usuarioActual: User | null = storage.buscarPorEmail(
         form.email.value,
     );
     if (usuarioActual && usuarioActual.password === form.password.value) {
@@ -139,45 +139,45 @@ function realizarMiValidacion(form: HTMLFormElement): boolean {
     const storage: StorageService = new StorageService();
 
     if (form.id == "loginForm") {
-        const usuarioActual: User | null = storage.buscarUsuarioPorCorreo(
+        const usuarioActual: User | null = storage.buscarPorEmail(
             form.email.value,
         );
         if (usuarioActual && usuarioActual.password === form.password.value) {
             esValido &&= true;
-            view.actualizarValidez(form.password, true, "");
+            view.setValidacion(form.password, true, "");
         } else {
             esValido &&= false;
-            view.actualizarValidez(
+            view.setValidacion(
                 form.password,
                 false,
                 "La contraseña o el correo no es valido",
             );
         }
     } else if (form.id == "registroForm") {
-        const usuarioActual: User | null = storage.buscarUsuarioPorCorreo(
+        const usuarioActual: User | null = storage.buscarPorEmail(
             form.correo.value,
         );
 
         if (usuarioActual) {
             esValido &&= false;
             debugger;
-            view.actualizarValidez(
+            view.setValidacion(
                 form.correo,
                 false,
                 "El usuario ingresado ya existe",
             );
         } else {
-            view.actualizarValidez(form.correo, true, "");
+            view.setValidacion(form.correo, true, "");
             if (form.password.value !== form.confirmPassword.value) {
                 esValido &&= false;
-                view.actualizarValidez(
+                view.setValidacion(
                     form.password,
                     false,
                     "La contraseña no es valida",
                 );
             } else {
                 esValido &&= true;
-                view.actualizarValidez(form.password, true, "");
+                view.setValidacion(form.password, true, "");
             }
         }
     } else {

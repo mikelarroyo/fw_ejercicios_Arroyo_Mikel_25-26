@@ -7,10 +7,8 @@ export class StorageService {
     private USER_KEY_ITEM: string = "users";
     private AUTH_SESSION_KEY_ITEM: string = "session";
     private USER_MEAL_KEY_ITEM: string = "userMeals_";
-    private USER_WEEKLY_KEY_ITEM: string = "weeklyPlans_";
-    private USER_CACHE_KEY_ITEM: string = "userMiniMeal_";
 
-    public guardarAgregarUsuario(nuevoUsuario: User) {
+    public registrarUsuario(nuevoUsuario: User) {
         const users: User[] = JSON.parse(
             localStorage.getItem(this.USER_KEY_ITEM) ?? "[]",
         );
@@ -50,7 +48,7 @@ export class StorageService {
         localStorage.removeItem(this.AUTH_SESSION_KEY_ITEM);
     }
 
-    public buscarUsuarioPorCorreo(correo: string) {
+    public buscarPorEmail(correo: string) {
         const users: User[] = JSON.parse(
             localStorage.getItem(this.USER_KEY_ITEM) ?? "[]",
         );
@@ -90,7 +88,7 @@ export class StorageService {
         }
     }
 
-    public obtenerProximoIdUser(): User["id"] {
+    public nextId(): User["id"] {
         const users: User[] = JSON.parse(
             localStorage.getItem(this.USER_KEY_ITEM) ?? "[]",
         );
@@ -104,7 +102,7 @@ export class StorageService {
         return ultimoId + 1;
     }
 
-    public getPlatosFavoritos(id: User["id"]): UserMeal[] {
+    public obtenerFavoritos(id: User["id"]): UserMeal[] {
         const favoritosUserSinProcesar =
             localStorage.getItem(this.USER_MEAL_KEY_ITEM + id) ?? "[]";
         const favoritosUserProcesados: UserMeal[] = JSON.parse(
@@ -114,8 +112,8 @@ export class StorageService {
         return favoritosUserProcesados;
     }
 
-    public guardarPlatoFavorito(platoGuardar: UserMeal, id: User["id"]): void {
-        const favoritosUserProcesados: UserMeal[] = this.getPlatosFavoritos(id);
+    public agregarFavorito(platoGuardar: UserMeal, id: User["id"]): void {
+        const favoritosUserProcesados: UserMeal[] = this.obtenerFavoritos(id);
 
         favoritosUserProcesados.push(platoGuardar);
 
@@ -124,22 +122,22 @@ export class StorageService {
             JSON.stringify(favoritosUserProcesados),
         );
     }
-    public buscarPlatoFavoritoPorId(
+    public buscarFavorito(
         platoId: MyMeal["idMeal"],
         id: User["id"],
     ): UserMeal | undefined {
-        const favoritosUserProcesados: UserMeal[] = this.getPlatosFavoritos(id);
+        const favoritosUserProcesados: UserMeal[] = this.obtenerFavoritos(id);
 
         return favoritosUserProcesados.find(
             (plato) => plato.mealId === platoId,
         );
     }
 
-    public quitarPlatoFavorito(
+    public eliminarFavorito(
         platoId: MyMeal["idMeal"],
         id: User["id"],
     ): void {
-        const favoritosUserProcesados: UserMeal[] = this.getPlatosFavoritos(id);
+        const favoritosUserProcesados: UserMeal[] = this.obtenerFavoritos(id);
 
         const indexPlato = favoritosUserProcesados.findIndex(
             (plato) => plato.mealId === platoId,
@@ -152,7 +150,7 @@ export class StorageService {
         );
     }
     public actualizarPlatoFavorito(platoActualizar: UserMeal, id: User["id"]) {
-        const favoritosUserProcesados: UserMeal[] = this.getPlatosFavoritos(id);
+        const favoritosUserProcesados: UserMeal[] = this.obtenerFavoritos(id);
 
         const indexPlato = favoritosUserProcesados.findIndex(
             (plato) => plato.mealId === platoActualizar.mealId,

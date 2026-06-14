@@ -18,9 +18,9 @@ async function cargarDetallesPlato(): Promise<void> {
     const view = new ViewService();
     const api = new ApiService();
 
-    const plato: MyMeal = await api.pedirPlatoPorId(Number(id));
+    const plato: MyMeal = await api.obtenerPorId(Number(id));
 
-    view.pintarVistaDetalleProducto(plato);
+    view.renderDetalle(plato);
 }
 
 function obtenerId(): string {
@@ -64,7 +64,7 @@ function cargarValoresOpinion() {
     const view = new ViewService();
 
     if (user && platoActualEnFavoritos(Number(obtenerId()))) {
-        const platoActual = storage.buscarPlatoFavoritoPorId(
+        const platoActual = storage.buscarFavorito(
             Number(obtenerId()),
             user,
         );
@@ -139,12 +139,12 @@ function handleBotonFavoritos(e: Event) {
 
         if (boton?.classList.contains("active")) {
             view.activarDesactivarBoton(boton, false);
-            storage.quitarPlatoFavorito(Number(obtenerId()), userMeal.userId);
+            storage.eliminarFavorito(Number(obtenerId()), userMeal.userId);
             resetearFormOpinion();
             view.mostrarElement(formFavorito, false);
         } else {
             view.activarDesactivarBoton(boton, true);
-            storage.guardarPlatoFavorito(userMeal, userMeal.userId);
+            storage.agregarFavorito(userMeal, userMeal.userId);
             view.mostrarElement(formFavorito, true);
         }
     } catch (error) {
@@ -181,7 +181,7 @@ function platoActualEnFavoritos(idMeal: MyMeal["idMeal"]): boolean {
     const storage = new StorageService();
     const userId = storage.getUsuarioActual()?.id;
     if (!userId) throw new Error("El usuario no existe");
-    const platoActualFav = storage.buscarPlatoFavoritoPorId(idMeal, userId);
+    const platoActualFav = storage.buscarFavorito(idMeal, userId);
     if (platoActualFav) {
         return true;
     } else {
@@ -225,7 +225,7 @@ function realizarMiValidacion(form: HTMLFormElement): boolean {
 
     if (form.estado.value === Estado.LA_HE_HECHO) {
         if (!form.rating || form.rating.value == 0) {
-            view.actualizarValidez(
+            view.setValidacion(
                 form.rating,
                 false,
                 "Ha marcado como Hecha, por favor deje una calificación.",
@@ -233,12 +233,12 @@ function realizarMiValidacion(form: HTMLFormElement): boolean {
             form.rating.classList.add("is-invalid");
             isValid &&= false;
         } else {
-            view.actualizarValidez(form.rating, true, "");
+            view.setValidacion(form.rating, true, "");
             isValid &&= true;
             form.rating.classList.remove("is-invalid");
         }
     } else if (form.estado.value === Estado.QUIERO_HACERLA) {
-        view.actualizarValidez(form.rating, true, "");
+        view.setValidacion(form.rating, true, "");
         isValid &&= true;
         form.rating.classList.remove("is-invalid");
     }
@@ -257,5 +257,5 @@ function handleOpinionFormulario(form: HTMLFormElement) {
 
     form.classList.remove("was-validated");
 
-    view.mostrarNotificacionEstado(true, "Se guardo correctamente.");
+    view.mostrarAlerta(true, "Se guardo correctamente.");
 }

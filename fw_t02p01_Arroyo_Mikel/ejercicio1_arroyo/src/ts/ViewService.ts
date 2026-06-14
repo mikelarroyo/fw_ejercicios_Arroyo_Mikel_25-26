@@ -3,7 +3,6 @@ import { MyMeal } from "./MyMeal";
 import { StorageService } from "./StorageService.js";
 
 declare const bootstrap: any;
-//TODO: alert de success o error
 
 export class ViewService {
     public insertarTexto(element: HTMLElement, mensaje: string): void {
@@ -21,7 +20,7 @@ export class ViewService {
         element.innerHTML += mensaje;
     }
 
-    public pintarPlatos(
+    public renderPlatos(
         platos: MyMeal[],
         element: HTMLDivElement,
         CANTIDAD_PLATOS_ALEATORIAS: number,
@@ -59,7 +58,7 @@ export class ViewService {
         }
     }
 
-    public pintarCategorias(
+    public renderCategorias(
         categorias: Category[],
         select: HTMLSelectElement,
     ): void {
@@ -131,7 +130,7 @@ export class ViewService {
         }
     }
 
-    public actualizarValidez(
+    public setValidacion(
         element: HTMLInputElement,
         valido: boolean,
         mensaje: string,
@@ -170,7 +169,7 @@ export class ViewService {
         tabBoot.show();
     }
 
-    public pintarVistaDetalleProducto(platoDetalle: MyMeal) {
+    public renderDetalle(platoDetalle: MyMeal) {
         const imagenHTML = document.querySelector(
             "#imagenPlato",
         ) as HTMLImageElement;
@@ -235,7 +234,7 @@ export class ViewService {
         }
     }
 
-    public mostrarNotificacionEstado(estado: boolean, mensaje: string) {
+    public mostrarAlerta(estado: boolean, mensaje: string) {
         const status = document.querySelector("#pageStatus") as HTMLDivElement;
         this.mostrarElement(status, true);
         this.insertarTextoFormato(

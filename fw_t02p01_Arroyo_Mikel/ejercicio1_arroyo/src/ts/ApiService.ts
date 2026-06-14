@@ -8,7 +8,7 @@ export class ApiService {
 
     constructor() {}
 
-    private convertirApiToInterface(plato: any): MyMeal {
+    private parsearPlato(plato: any): MyMeal {
         let i = 1;
         const ingredientes: MyMeal["ingredients"] = [];
         while (plato["strIngredient" + i]) {
@@ -28,14 +28,14 @@ export class ApiService {
         };
     }
 
-    public async pedirProductoRandom(): Promise<MyMeal> {
+    public async obtenerRecetaAleatoria(): Promise<MyMeal> {
         const response: Response = await fetch(this.API_URL + "/random.php");
         const data = await response.json();
 
-        return this.convertirApiToInterface(data.meals[0]);
+        return this.parsearPlato(data.meals[0]);
     }
 
-    public async pedirTodasCategorias(): Promise<Category[]> {
+    public async obtenerCategorias(): Promise<Category[]> {
         const response: Response = await fetch(
             this.API_URL + "/categories.php",
         );
@@ -46,7 +46,7 @@ export class ApiService {
         );
     }
 
-    public async pedirPlatosPorCategoria(categoria: string): Promise<MyMeal[]> {
+    public async filtrarPorCategoria(categoria: string): Promise<MyMeal[]> {
         const response: Response = await fetch(
             this.API_URL + `/filter.php?c=${categoria}`,
         );
@@ -56,13 +56,13 @@ export class ApiService {
         return data.meals;
     }
 
-    public async pedirPlatoPorId(id: number): Promise<MyMeal> {
+    public async obtenerPorId(id: number): Promise<MyMeal> {
         const response: Response = await fetch(
             this.API_URL + `/lookup.php?i=${id}`,
         );
 
         const data = await response.json();
 
-        return this.convertirApiToInterface(data.meals[0]);
+        return this.parsearPlato(data.meals[0]);
     }
 }

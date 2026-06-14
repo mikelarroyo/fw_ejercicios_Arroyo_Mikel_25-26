@@ -55,7 +55,7 @@ async function cargarFavoritos() {
     const platosFavoritos: MyMeal[] = [];
     if (usuario) {
         platosFavoritosSinProcesar.push(
-            ...storage.getPlatosFavoritos(usuario.id),
+            ...storage.obtenerFavoritos(usuario.id),
         );
     }
     console.log("Aqui");
@@ -70,11 +70,11 @@ async function cargarFavoritos() {
         console.log(i);
 
         platosFavoritos.push(
-            await api.pedirPlatoPorId(platosFavoritosSinProcesar[i].mealId),
+            await api.obtenerPorId(platosFavoritosSinProcesar[i].mealId),
         );
     }
 
-    view.pintarPlatos(
+    view.renderPlatos(
         platosFavoritos,
         document.querySelector("#platosFavoritos") as HTMLDivElement,
         CANTIDAD_PLATOS_FAVORITOS,
@@ -141,7 +141,7 @@ export async function cargarPlatosHome(e?: Event): Promise<void> {
             platos.push(...platosPedidos);
         }
 
-        view.pintarPlatos(
+        view.renderPlatos(
             platos,
             contenedorAleatorios,
             CANTIDAD_PLATOS_ALEATORIAS,
@@ -155,7 +155,7 @@ async function pedirPlatosCategoria(categoria: string): Promise<MyMeal[]> {
     const api = new ApiService();
 
     const categoriaPlatosSinProcesar: MyMeal[] =
-        await api.pedirPlatosPorCategoria(categoria);
+        await api.filtrarPorCategoria(categoria);
 
     const numeros_aleatorios = pedirNAleatorios(
         CANTIDAD_PLATOS_ALEATORIAS,
@@ -180,7 +180,7 @@ async function pedirTodosAleatorio(): Promise<MyMeal[]> {
     const api = new ApiService();
     const todosAleatorios: MyMeal[] = [];
     for (let i = 0; i < CANTIDAD_PLATOS_ALEATORIAS; i++) {
-        todosAleatorios.push(await api.pedirProductoRandom());
+        todosAleatorios.push(await api.obtenerRecetaAleatoria());
     }
     console.log(todosAleatorios);
 
@@ -191,20 +191,20 @@ async function cargarCategorias(): Promise<void> {
     const api = new ApiService();
     const view = new ViewService();
 
-    const categorias: Category[] = await api.pedirTodasCategorias();
+    const categorias: Category[] = await api.obtenerCategorias();
 
     const categoriesSelect = document.querySelector(
         "#categories",
     ) as HTMLSelectElement;
 
-    view.pintarCategorias(categorias, categoriesSelect);
+    view.renderCategorias(categorias, categoriesSelect);
     categoriesSelect.addEventListener("change", cargarPlatosHome);
 }
 
 async function pedirPlatoPorId(id: number): Promise<MyMeal> {
     const api = new ApiService();
 
-    const plato: MyMeal = await api.pedirPlatoPorId(id);
+    const plato: MyMeal = await api.obtenerPorId(id);
 
     return plato;
 }
